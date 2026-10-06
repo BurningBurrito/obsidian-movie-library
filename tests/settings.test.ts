@@ -12,8 +12,22 @@ describe('settings', () => {
 			postersFolder: 'Posters',
 			libraryNoteName: 'Watch Library MOC',
 			openAfterCreate: true,
+			movieTemplate: '',
+			tvTemplate: '',
+			animeTemplate: '',
+			movieSource: 'tmdb',
+			tvSource: 'tvmaze',
+			animeSource: 'tenrai',
+			useFallback: true,
 			animeTitle: 'english',
 		});
+	});
+
+	it('repairs a default source that doesn’t exist or doesn’t cover that type', () => {
+		const settings = sanitizeSettings({ tvSource: 'jikan', movieSource: 'netflix' as never, animeSource: 'tmdb' });
+		assert.equal(settings.tvSource, 'tvmaze', 'Jikan has no TV shows');
+		assert.equal(settings.movieSource, 'tmdb');
+		assert.equal(settings.animeSource, 'tmdb', 'TMDB is a valid anime source');
 	});
 
 	it('keeps saved values and repairs ones the settings page would reject', () => {

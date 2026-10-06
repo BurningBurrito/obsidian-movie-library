@@ -9,6 +9,7 @@ import type WatchlistNotesPlugin from '../../src/main';
 export interface TestApp {
 	vault: ReturnType<typeof makeVault>;
 	fileManager: { processFrontMatter(file: TFile, fn: (frontmatter: Record<string, unknown>) => void): Promise<void> };
+	metadataCache: { getFileCache(file: TFile): { frontmatter?: Record<string, unknown> } | null };
 	workspace: {
 		opened: string[];
 		activeEditor: null;
@@ -139,6 +140,15 @@ export function makeApp(): TestApp {
 			getSecret: (id) => secrets.get(id) ?? null,
 		},
 		plugins: { enabledPlugins: new Set(['dataview']), manifests: { dataview: {} } },
+		// Like Obsidian's cache of each note's properties, read straight from the file.
+		metadataCache: {
+			getFileCache: (file) => {
+				const text = files.get(file.path);
+				if (typeof text !== 'string') return null;
+				const match = text.match(FRONTMATTER);
+				return match ? { frontmatter: (parse(match[1] ?? '') as Record<string, unknown> | null) ?? {} } : {};
+			},
+		},
 	};
 	return app;
 }
@@ -147,6 +157,7 @@ export function makeApp(): TestApp {
 export function makePlugin(app: TestApp, settings: Partial<WatchlistNotesSettings> = {}): WatchlistNotesPlugin {
 	const plugin = {
 		app,
+		manifest: { id: 'watchlist-notes', version: 'test' },
 		settings: { ...DEFAULT_SETTINGS, ...settings },
 		getSecret: (name: string) => (name ? (app.secretStorage.getSecret(name) ?? '') : ''),
 		saveSettings: () => Promise.resolve(),

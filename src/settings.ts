@@ -1,10 +1,14 @@
 import { App, Notice, PluginSettingTab, SettingDefinitionItem, SettingGroupItem } from 'obsidian';
 import { dataviewMessage, dataviewStatus } from './core/dataview';
 import { toMediaError } from './core/errors';
-import { normalizeFolder } from './core/notes';
+import { ensureFolder, normalizeFolder } from './core/notes';
 import { libraryPaths } from './core/paths';
 import { regenerateLibraryNote } from './library/moc';
 import type WatchlistNotesPlugin from './main';
+import { BUILT_IN_TEMPLATES, TEMPLATE_COPY_PATHS } from './media/templates';
+import { MEDIA_TYPES, MEDIA_WORDS, MediaType } from './media/types';
+import { configuredSources, getSource, SOURCE_ORDER, SOURCES } from './sources';
+import type { SourceId } from './sources/types';
 
 /** Which title names anime notes and the anime table. */
 export type AnimeTitle = 'english' | 'romaji' | 'japanese';
@@ -23,6 +27,17 @@ export interface WatchlistNotesSettings {
 	/** The overview note, without ".md". */
 	libraryNoteName: string;
 	openAfterCreate: boolean;
+
+	/** Template files; "" = the built-in template. */
+	movieTemplate: string;
+	tvTemplate: string;
+	animeTemplate: string;
+
+	/** Where searches go first, per type. */
+	movieSource: SourceId;
+	tvSource: SourceId;
+	animeSource: SourceId;
+	useFallback: boolean;
 	animeTitle: AnimeTitle;
 }
 
@@ -34,8 +49,24 @@ export const DEFAULT_SETTINGS: WatchlistNotesSettings = {
 	postersFolder: 'Posters',
 	libraryNoteName: 'Watch Library MOC',
 	openAfterCreate: true,
+
+	movieTemplate: '',
+	tvTemplate: '',
+	animeTemplate: '',
+
+	movieSource: 'tmdb',
+	tvSource: 'tvmaze',
+	animeSource: 'tenrai',
+	useFallback: true,
 	animeTitle: 'english',
 };
+
+/** The settings that belong to each type. */
+export const TYPE_SETTINGS = {
+	movie: { template: 'movieTemplate', source: 'movieSource' },
+	tv: { template: 'tvTemplate', source: 'tvSource' },
+	anime: { template: 'animeTemplate', source: 'animeSource' },
+} as const satisfies Record<MediaType, { template: keyof WatchlistNotesSettings; source: keyof WatchlistNotesSettings }>;
 
 const ANIME_TITLES: Record<AnimeTitle, string> = { english: 'English', romaji: 'Romaji', japanese: 'Japanese' };
 
@@ -51,6 +82,10 @@ export function sanitizeSettings(saved: Partial<WatchlistNotesSettings> | null):
 	const settings = Object.assign({}, DEFAULT_SETTINGS, saved);
 	for (const key of [...FOLDER_KEYS, 'libraryNoteName'] as const) {
 		if (folderProblem(settings[key])) settings[key] = DEFAULT_SETTINGS[key];
+	}
+	for (const type of MEDIA_TYPES) {
+		const key = TYPE_SETTINGS[type].source;
+		if (!SOURCE_ORDER[type].includes(settings[key])) settings[key] = DEFAULT_SETTINGS[key];
 	}
 	if (!(settings.animeTitle in ANIME_TITLES)) settings.animeTitle = DEFAULT_SETTINGS.animeTitle;
 	return settings;
@@ -82,6 +117,31 @@ export function folderClash(settings: WatchlistNotesSettings, key: FolderKey, va
 	return undefined;
 }
 
+/**
+ * Save the built-in templates to "Templates/…" (skipping any that exist) and
+ * select them. Returns what happened, for a notice.
+ */
+export async function createTemplateCopies(plugin: WatchlistNotesPlugin): Promise<string> {
+	const created: string[] = [];
+	const existing: string[] = [];
+	for (const type of MEDIA_TYPES) {
+		const path = TEMPLATE_COPY_PATHS[type];
+		if (plugin.app.vault.getFileByPath(path)) {
+			existing.push(path);
+		} else {
+			await ensureFolder(plugin.app, path.slice(0, path.lastIndexOf('/')));
+			await plugin.app.vault.create(path, BUILT_IN_TEMPLATES[type]);
+			created.push(path);
+		}
+		plugin.settings[TYPE_SETTINGS[type].template] = path;
+	}
+	await plugin.saveSettings();
+	const parts = [];
+	if (created.length) parts.push(`Created ${created.map((p) => `"${p}"`).join(', ')}. Edit them to change your notes.`);
+	if (existing.length) parts.push(`${existing.map((p) => `"${p}"`).join(', ')} already existed and ${existing.length === 1 ? 'is' : 'are'} now used.`);
+	return parts.join(' ');
+}
+
 type SettingKey = keyof WatchlistNotesSettings;
 
 // Declarative settings (Obsidian 1.13+): Obsidian renders these, saves changes
@@ -98,6 +158,7 @@ export class WatchlistNotesSettingTab extends PluginSettingTab {
 		return [
 			{ type: 'group', items: this.generalItems() },
 			{ type: 'group', heading: 'Library note', items: this.libraryNoteItems() },
+			{ type: 'group', heading: 'Templates', items: this.templateItems() },
 			{ type: 'group', heading: 'Sources', items: this.sourceItems() },
 		];
 	}
@@ -170,14 +231,81 @@ export class WatchlistNotesSettingTab extends PluginSettingTab {
 		];
 	}
 
-	private sourceItems(): SettingGroupItem<SettingKey>[] {
+	private templateItems(): SettingGroupItem<SettingKey>[] {
+		const fileItem = (type: MediaType): SettingGroupItem<SettingKey> => ({
+			name: `${MEDIA_WORDS[type].label} template`,
+			desc: 'Leave empty to use the built-in template. The README lists the available variables.',
+			control: {
+				type: 'file',
+				key: TYPE_SETTINGS[type].template,
+				placeholder: TEMPLATE_COPY_PATHS[type],
+				filter: (file) => file.extension === 'md',
+			},
+		});
 		return [
+			fileItem('movie'),
+			fileItem('tv'),
+			fileItem('anime'),
+			{
+				name: 'Create editable templates',
+				desc: `Save the built-in templates to the "${TEMPLATE_COPY_PATHS.movie.split('/')[0]}" folder and use them, so you can change them. Existing files aren't overwritten.`,
+				action: () =>
+					void this.run(async () => {
+						new Notice(await createTemplateCopies(this.plugin));
+						this.update();
+					}),
+			},
+		];
+	}
+
+	private sourceItems(): SettingGroupItem<SettingKey>[] {
+		const defaultSourceItem = (type: MediaType): SettingGroupItem<SettingKey> | null => {
+			const sources = configuredSources(this.plugin, type);
+			if (sources.length === 0) return null;
+			return {
+				name: `${MEDIA_WORDS[type].label}: default source`,
+				desc: 'Where searches go first. You can switch in the search window.',
+				control: {
+					type: 'dropdown',
+					key: TYPE_SETTINGS[type].source,
+					options: Object.fromEntries(sources.map((source) => [source.id, source.name])),
+				},
+			};
+		};
+		const freeSources = SOURCES.filter((source) => source.isConfigured(this.plugin)).map((source) => source.id);
+		return [
+			...MEDIA_TYPES.map(defaultSourceItem).filter((item): item is SettingGroupItem<SettingKey> => item !== null),
+			{
+				name: 'Try the next source if the default one fails or finds nothing',
+				desc: 'Uses the other sources you’ve set up for that type, in order. A source that just failed is skipped for 10 minutes.',
+				control: { type: 'toggle', key: 'useFallback' },
+			},
 			{
 				name: 'Anime title',
 				desc: 'Which title names anime notes and the anime table. English and Japanese fall back to the romaji title when there’s none. After changing it, regenerate the library note to update the table; existing note names don’t change.',
 				control: { type: 'dropdown', key: 'animeTitle', options: ANIME_TITLES },
 			},
+			{
+				name: 'Check sources',
+				desc: 'Makes one small request to each service, to check that it can be reached.',
+				render: (setting) => {
+					for (const id of freeSources) {
+						const source = getSource(id);
+						if (source) setting.addButton((button) => button.setButtonText(source.name).onClick(() => void this.checkSource(id)));
+					}
+				},
+			},
 		];
+	}
+
+	private async checkSource(id: SourceId): Promise<void> {
+		const source = getSource(id);
+		if (!source) return;
+		try {
+			new Notice(await source.check(this.plugin));
+		} catch (err) {
+			new Notice(`${source.name} check failed: ${toMediaError(err).message}`, 10_000);
+		}
 	}
 
 	private async run(task: () => Promise<void>): Promise<void> {

@@ -1,5 +1,6 @@
 # Status: Watchlist Notes (`watchlist-notes`)
-**Current phase:** Phase 4 — Build and test: **milestone 1 in progress** (TVmaze, Create TV show note)
+**Current phase:** Phase 4 — Build and test: **milestone 1 built and tested offline; waiting for the user's test in
+the vault** (`test-vault/Start here.md`, "Milestone 1 checks")
 **Last updated:** 2026-10-06
 
 ## Done
@@ -108,14 +109,40 @@
       2000×3000 original, 1.3 MB). Sample poster replaced. Note: smaller than MyAnimeList (425 px) and TMDB (500 px);
       sharp in the table (80 px), soft if embedded full-size in a note
 
+### Phase 4 — Build and test
+- [x] **Milestone 1** (TVmaze, Create TV show note), local commit:
+  - `core/http.ts`: 429 retried after `Retry-After` (2 s if missing) up to twice when ≤ 10 s, else "try again in N
+    minutes"; 500/502/503/504 retried after 1 s and 3 s; no retry on timeouts or network errors; per-source timeout;
+    progress messages ("Still waiting for …" after 5 s, "… is busy; trying again…"); option to hand the final 5xx to
+    the source (for Tenrai/Jikan's "can't reach MyAnimeList" in M2). The URL is never logged (keys may be in it)
+  - `sources/`: `Title` model for all types; registry with the fallback order per type; `parseQuery` (year in
+    parentheses, IMDb ID or link, MyAnimeList link; bare numbers stay titles); fallback as in Library Notes plus a
+    **10-minute skip** of a source that just failed (network/timeout/server/rate limit/bad response), except when
+    chosen with its button; "Searching TVmaze…" in the window; genre names made consistent; HTML → text
+  - **TVmaze**: search (year first), IMDb lookup (301 → show, 404 → none), details in one request (cast, crew, seasons
+    embedded): creators, top-5 cast, seasons with a date, episodes; network or streaming service; medium poster saved,
+    original linked; 500 ms spacing; check button
+  - `media/`: the three built-in templates (DESIGN.md §9, with owned/streaming), variables, anime title choice;
+    the create flow (search → pick → duplicates → details → poster → template → open), copies named `Title (Year)`,
+    duplicate window shows the existing note's year, posters `Title (Year) - source-id.jpg`, the "needs a key"
+    window for movies (Open settings via a feature-checked wrapper; How to get a key → README section)
+  - UI: ribbon `clapperboard` → menu (Movie, TV show; Anime in M2); commands Create movie note / Create TV show note;
+    settings groups Templates (per type + Create editable templates) and Sources (default per type, fallback,
+    anime title, Check buttons); search window shows progress
+  - Ribbon tooltip reworded to "Create a watchlist note": the sentence-case lint rule's acronym list lacks "TV"
+    (Obsidian's review uses the defaults; same approach as Library Notes)
+  - Tests: **77 pass offline in 0.2 s** (new: retries 6, sources/fallback/genres/parsing 9, templates 6, TVmaze 6
+    recorded, create flow 11 recorded). Recordings: 17 TVmaze responses (api + static hosts), content-type header
+    only, scanned clean. Recording run: 17/17 against the live service
+  - build (main.js 35,556 bytes), lint, lint without moment types: clean
+  - Design details settled while building (DESIGN.md §6): anime exact lookup = MyAnimeList **link** only; a year in
+    parentheses puts that year's results **first** (others follow)
+
 ## In progress
-- [ ] Phase 4 milestone 1 (see Next)
+- [ ] User: milestone 1 test in the vault (`test-vault/Start here.md`, "Milestone 1 checks")
 
 ## Next
 - [ ] Phase 4 — build and test, in milestones, each tested in the test vault with Library Notes alongside:
-  - M1: http retries/backoff + 10-minute skip of failed sources; source registry per type; TVmaze; Create TV show
-    note end to end (search window, results, exact IMDb lookup, duplicates with `Title (Year)` copies, poster,
-    template); ribbon menu; templates settings; "Create editable templates"
   - M2: Tenrai + Jikan (one module, two base URLs); Create anime note; anime title for note names; MyAnimeList link
     lookup; CM/PV/Music filtered; adult titles hidden
   - M3: TMDB (movies; TV and anime fallback) and OMDb with keys in the keychain, Check buttons, no-key window,
@@ -150,3 +177,5 @@
 ## Open questions / blockers
 - Risk: Tenrai is in beta with a v2 planned; Jikan is down. Anime without a key depends on one of them working
 - To verify in Phase 4 with the user's keys: OMDb `Poster` field on a free key; TMDB with a real token
+- Phase 5: the README needs a heading "Getting a TMDB key" (the "How to get a key" button links to
+  `#getting-a-tmdb-key`)

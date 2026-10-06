@@ -319,9 +319,10 @@ Notes (books) and Media DB (§3).
 - **Search window:** the same window as Library Notes, titled "Search for a movie" (TV show, anime), with a button per
   configured source for that type when there are two or more. Selected text in the editor fills the search box, as in
   Library Notes.
-- **Exact lookups** (like ISBNs in Library Notes, the result list is skipped): an IMDb ID (`tt1375666`) for movies and
-  TV, a MyAnimeList link or ID for anime. A year in parentheses narrows movie and TV searches: `Dune (2021)`. Only in
-  parentheses, because a bare number can be part of the title (*Blade Runner 2049*).
+- **Exact lookups** (like ISBNs in Library Notes, the result list is skipped): an IMDb ID (`tt1375666`) or IMDb link for
+  movies and TV, a MyAnimeList link for anime. A bare number is never treated as an ID, since it can be a title (*1917*,
+  *300*). A year in parentheses puts that year's results first: `The Office (2001)`. Only in parentheses, because a
+  bare number can be part of the title (*Blade Runner 2049*). (Built 2026-10-06, milestone 1.)
 - **Results list:** poster thumbnail, title, and details: movies "2010 · original title if different"; TV "2022 ·
   Apple TV · Running"; anime "2023 · TV · 28 episodes · Madhouse".
 - **Movies without a key:** instead of a search window, a window explains "Movie search needs a free TMDB or OMDb key"

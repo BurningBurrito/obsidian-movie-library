@@ -19,7 +19,10 @@ export interface SearchOptions {
 	initialMode?: string;
 }
 
-type Lookup<T> = (query: string, mode: string | undefined) => Promise<T>;
+/** Shows a status line in the window, such as "Still waiting for TVmaze…". */
+export type ShowProgress = (message: string) => void;
+
+type Lookup<T> = (query: string, mode: string | undefined, progress: ShowProgress) => Promise<T>;
 
 /** Ask for a search term and look it up. Resolves with null if the user cancels. */
 export function openSearchModal<T>(app: App, options: SearchOptions, lookup: Lookup<T>): Promise<T | null> {
@@ -125,7 +128,9 @@ class SearchModal<T> extends Modal {
 		this.setBusy(true);
 		this.showMessage('');
 		try {
-			const result = await this.lookup(query, this.mode?.id);
+			const result = await this.lookup(query, this.mode?.id, (message) => {
+				if (!this.closed) this.showMessage(message);
+			});
 			if (this.closed) return;
 			this.result = result;
 			this.close();

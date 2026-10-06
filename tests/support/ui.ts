@@ -11,7 +11,9 @@ const steps: Step[] = [];
 /** What happened, for assertions: errors shown in the search window, buttons offered, etc. */
 export const ui = {
 	searchErrors: [] as string[],
-	searchOptions: [] as { modes?: { id: string; label: string }[]; initialMode?: string }[],
+	searchOptions: [] as { title?: string; modes?: { id: string; label: string }[]; initialMode?: string }[],
+	/** Status lines the search window showed ("Searching TVmaze…"). */
+	progress: [] as string[],
 	pickLists: [] as unknown[][],
 	choices: [] as { title: string; message: string; labels: string[] }[],
 };
@@ -31,6 +33,7 @@ export function resetUi() {
 	steps.length = 0;
 	ui.searchErrors.length = 0;
 	ui.searchOptions.length = 0;
+	ui.progress.length = 0;
 	ui.pickLists.length = 0;
 	ui.choices.length = 0;
 }
@@ -46,14 +49,14 @@ function next<K extends Step['kind']>(kind: K): Extract<Step, { kind: K }> | und
 // and the user then closes it.
 export async function openSearchModal<T>(
 	_app: unknown,
-	options: { modes?: { id: string; label: string }[]; initialMode?: string },
-	lookup: (query: string, mode: string | undefined) => Promise<T>,
+	options: { title?: string; modes?: { id: string; label: string }[]; initialMode?: string },
+	lookup: (query: string, mode: string | undefined, progress: (message: string) => void) => Promise<T>,
 ): Promise<T | null> {
 	ui.searchOptions.push(options);
 	const step = next('search');
 	if (!step) return null;
 	try {
-		return await lookup(step.query, step.mode ?? options.initialMode);
+		return await lookup(step.query, step.mode ?? options.initialMode, (message) => ui.progress.push(message));
 	} catch (err) {
 		ui.searchErrors.push(toMediaError(err).message);
 		return null;
