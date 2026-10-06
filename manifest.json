@@ -1,0 +1,10 @@
+{
+	"id": "watchlist-notes",
+	"name": "Watchlist Notes",
+	"version": "0.1.0",
+	"minAppVersion": "1.13.0",
+	"description": "Search for movies, TV shows, and anime, save each one as a note with its poster, and keep a library note with a table of everything you watch. TV shows and anime work without an API key.",
+	"author": "BurningBurrito",
+	"authorUrl": "https://github.com/BurningBurrito",
+	"isDesktopOnly": false
+}
