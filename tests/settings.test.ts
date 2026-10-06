@@ -19,6 +19,7 @@ describe('settings', () => {
 			tvSource: 'tvmaze',
 			animeSource: 'tenrai',
 			useFallback: true,
+			hideAdult: true,
 			animeTitle: 'english',
 		});
 	});

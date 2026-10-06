@@ -2,11 +2,12 @@ import { MediaError, MediaErrorKind, toMediaError } from '../core/errors';
 import type { Progress } from '../core/http';
 import type WatchlistNotesPlugin from '../main';
 import { MEDIA_WORDS, MediaType } from '../media/types';
+import { jikan, tenrai } from './myanimelist';
 import { tvmaze } from './tvmaze';
 import type { MediaSource, SearchQuery, SearchResult, SourceId } from './types';
 
 /** Every source. Tests may swap these for stand-ins. */
-export const SOURCES: MediaSource[] = [tvmaze];
+export const SOURCES: MediaSource[] = [tvmaze, tenrai, jikan];
 
 /** The fallback order for each type (DESIGN.md §7). Sources that aren't set up are skipped. */
 export const SOURCE_ORDER: Record<MediaType, readonly SourceId[]> = {

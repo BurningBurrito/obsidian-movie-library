@@ -38,6 +38,8 @@ export interface WatchlistNotesSettings {
 	tvSource: SourceId;
 	animeSource: SourceId;
 	useFallback: boolean;
+	/** Leave out titles rated for adults (MyAnimeList's R+ and Rx; TMDB's adult flag). */
+	hideAdult: boolean;
 	animeTitle: AnimeTitle;
 }
 
@@ -58,6 +60,7 @@ export const DEFAULT_SETTINGS: WatchlistNotesSettings = {
 	tvSource: 'tvmaze',
 	animeSource: 'tenrai',
 	useFallback: true,
+	hideAdult: true,
 	animeTitle: 'english',
 };
 
@@ -279,6 +282,11 @@ export class WatchlistNotesSettingTab extends PluginSettingTab {
 				name: 'Try the next source if the default one fails or finds nothing',
 				desc: 'Uses the other sources you’ve set up for that type, in order. A source that just failed is skipped for 10 minutes.',
 				control: { type: 'toggle', key: 'useFallback' },
+			},
+			{
+				name: 'Hide adult titles',
+				desc: 'Leaves titles rated for adults out of search results (MyAnimeList’s R+ and Rx ratings). A MyAnimeList link always finds its anime.',
+				control: { type: 'toggle', key: 'hideAdult' },
 			},
 			{
 				name: 'Anime title',

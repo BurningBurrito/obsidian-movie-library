@@ -54,11 +54,14 @@ describe('retries', () => {
 		assert.equal(requests.length, 1, '501 (not implemented) is not retried');
 	});
 
-	it('can hand the final server error to the caller', async () => {
+	it('lets a source describe a server error that remains after the retries', async () => {
 		answers([504, { message: 'Jikan failed to connect to MyAnimeList' }]);
-		const response = await httpRequest(URL, { sourceName: 'Jikan', handleServerError: true });
-		assert.equal(response.status, 504);
+		const describeServerError = (r: { status: number }) => (r.status === 504 ? "Jikan can't reach MyAnimeList right now." : undefined);
+		await assert.rejects(httpRequest(URL, { sourceName: 'Jikan', describeServerError }), /^MediaError: Jikan can't reach MyAnimeList right now\.$/);
 		assert.equal(requests.length, 3, 'still retried first');
+		resetNetwork();
+		answers([500, {}]);
+		await assert.rejects(httpRequest(URL, { sourceName: 'Jikan', describeServerError }), /Jikan is having problems \(error 500\)/);
 	});
 
 	it('does not retry timeouts or network failures', async () => {

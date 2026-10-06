@@ -64,3 +64,36 @@ export function sampleTitle(type: MediaType, overrides: Partial<Title> = {}): Ti
 	const sample = samples[type];
 	return { ...emptyTitle(type, sample.source!), ...sample, ...overrides };
 }
+
+/** A Jikan v4 search answer with one anime, for tests that can't use recordings (Jikan was down). */
+export function jikanAnswer() {
+	return {
+		data: [
+			{
+				mal_id: 52991,
+				url: 'https://myanimelist.net/anime/52991/Sousou_no_Frieren',
+				images: { jpg: { image_url: 'https://cdn.myanimelist.net/images/anime/1015/138006.jpg', large_image_url: 'https://cdn.myanimelist.net/images/anime/1015/138006l.jpg' } },
+				titles: [
+					{ type: 'Default', title: 'Sousou no Frieren' },
+					{ type: 'Japanese', title: '葬送のフリーレン' },
+					{ type: 'English', title: "Frieren: Beyond Journey's End" },
+				],
+				title: 'Sousou no Frieren',
+				title_english: "Frieren: Beyond Journey's End",
+				title_japanese: '葬送のフリーレン',
+				type: 'TV',
+				episodes: 28,
+				status: 'Finished Airing',
+				aired: { from: '2023-09-29T00:00:00+00:00', to: '2024-03-22T00:00:00+00:00' },
+				duration: '24 min per ep',
+				rating: 'PG-13 - Teens 13 or older',
+				score: 9.25,
+				synopsis: 'The adventure is over but life goes on for an elf mage.\n\n[Written by MAL Rewrite]',
+				season: 'fall',
+				year: 2023,
+				studios: [{ name: 'Madhouse' }],
+				genres: [{ name: 'Adventure' }, { name: 'Award Winning' }, { name: 'Fantasy' }],
+			},
+		],
+	};
+}

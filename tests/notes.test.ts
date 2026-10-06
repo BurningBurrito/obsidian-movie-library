@@ -12,6 +12,9 @@ describe('file names', () => {
 		assert.equal(safeFileName('AC/DC: [Live] #1 | “Best”?', 'x'), 'AC DC Live 1 Best');
 		assert.equal(safeFileName('  ...  ', 'Untitled'), 'Untitled');
 		assert.equal(safeFileName('a'.repeat(200), 'x', 80).length, 80);
+		assert.equal(safeFileName('Your Name.', 'x'), 'Your Name', 'no dot at the end (Windows)');
+		assert.equal(safeFileName('K-On!! ...', 'x'), 'K-On!!');
+		assert.equal(safeFileName('Mr. Robot', 'x'), 'Mr. Robot', 'dots inside are fine');
 	});
 
 	it('treats small differences as the same name', () => {

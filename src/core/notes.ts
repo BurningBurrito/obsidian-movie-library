@@ -16,7 +16,8 @@ export function safeFileName(text: string, fallback: string, maxLength = 120): s
 		.trim()
 		.replace(/^\.+/, '')
 		.slice(0, maxLength)
-		.trim();
+		// Windows doesn't allow names that end with a dot or a space ("Your Name." → "Your Name").
+		.replace(/[.\s]+$/, '');
 	return name || fallback;
 }
 

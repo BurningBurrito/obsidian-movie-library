@@ -1,6 +1,6 @@
 # Status: Watchlist Notes (`watchlist-notes`)
-**Current phase:** Phase 4 — Build and test: **milestone 1 built and tested offline; waiting for the user's test in
-the vault** (`test-vault/Start here.md`, "Milestone 1 checks")
+**Current phase:** Phase 4 — Build and test: **milestone 2 (anime) built and tested offline; waiting for the user's
+test in the vault** (`test-vault/Start here.md`, "Milestone 2 checks")
 **Last updated:** 2026-10-06
 
 ## Done
@@ -138,13 +138,31 @@ the vault** (`test-vault/Start here.md`, "Milestone 1 checks")
   - Design details settled while building (DESIGN.md §6): anime exact lookup = MyAnimeList **link** only; a year in
     parentheses puts that year's results **first** (others follow)
 
+- [x] User tested milestone 1 in the vault (2026-10-06): "yes all tests passed"
+- [x] **Milestone 2** (anime), local commit:
+  - `sources/myanimelist.ts`: one module for APIs in Jikan v4's format, used twice: **Tenrai**
+    (`api.tenrai.org/v1`, 500 ms spacing) and **Jikan** (`api.jikan.moe/v4`, 1 s spacing); 20 s timeout; search with
+    `sfw=true` when "Hide adult titles" is on (checked live: R+ titles left out); CM/PV/Music left out; MyAnimeList
+    link → that anime (404 → none); no second request for details (search answers are complete); three titles,
+    format, episodes, aired dates, studios, genres, age rating, season ("Fall 2023"), runtime ("2 hr 4 min" → 124),
+    synopsis without "[Written by MAL Rewrite]"; poster `large`; key `mal-<id>` shared by both
+  - `core/http.ts`: sources can describe a server error left after the retries; Tenrai/Jikan's 504 becomes
+    "Tenrai can't reach MyAnimeList right now…" (replaces the earlier hand-back option; keeps the cache)
+  - Settings: **Hide adult titles** (on); Create anime note command + **Anime** in the ribbon menu (`sparkles`)
+  - **Bug fix (also present in Library Notes):** file names ending with a dot or space are invalid on Windows;
+    `safeFileName` now trims them ("Your Name." → `Your Name.md`, not `Your Name..md`; the `title` property keeps
+    the real title). Library Notes has the same code (books rarely end with a dot); not changed there (read-only)
+  - Jikan still down today (connection timeouts at 16:30 local); Jikan tested with stand-in answers in its format
+  - Tests: **91 pass offline in 0.24 s** (new: MyAnimeList sources 8 with recorded Tenrai answers, anime create
+    flow 6 recorded, file-name cases 3). Recording run 14/14 live. Recordings scanned: only Tenrai and
+    cdn.myanimelist.net, content-type header only; one scan hit ("toNY") is inside a poster's base64 bytes
+  - build (main.js 38,343 bytes), lint, lint without moment types: clean
+
 ## In progress
-- [ ] User: milestone 1 test in the vault (`test-vault/Start here.md`, "Milestone 1 checks")
+- [ ] User: milestone 2 test in the vault (`test-vault/Start here.md`, "Milestone 2 checks")
 
 ## Next
 - [ ] Phase 4 — build and test, in milestones, each tested in the test vault with Library Notes alongside:
-  - M2: Tenrai + Jikan (one module, two base URLs); Create anime note; anime title for note names; MyAnimeList link
-    lookup; CM/PV/Music filtered; adult titles hidden
   - M3: TMDB (movies; TV and anime fallback) and OMDb with keys in the keychain, Check buttons, no-key window,
     Credits with the bundled TMDB logo and notice
   - M4: Refresh TMDB notes (due after 5 months, reminder, confirmation, summary)

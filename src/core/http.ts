@@ -39,8 +39,8 @@ export interface RequestOptions {
 	onProgress?: Progress;
 	/** Return a 429 to the caller instead of retrying or the generic "too many requests" error. */
 	handleRateLimit?: boolean;
-	/** Return a 5xx to the caller (after the retries) instead of the generic "having problems" error. */
-	handleServerError?: boolean;
+	/** A clearer message for a server error that remains after the retries, e.g. "… can't reach MyAnimeList". */
+	describeServerError?: (response: RequestUrlResponse) => string | undefined;
 }
 
 /**
@@ -77,8 +77,10 @@ export async function httpRequest(url: string, options: RequestOptions): Promise
 				await delay(wait);
 				continue;
 			}
-			if (options.handleServerError) return response;
-			throw new MediaError('server', `${sourceName} is having problems (error ${response.status}). Try again later.`);
+			throw new MediaError(
+				'server',
+				options.describeServerError?.(response) ?? `${sourceName} is having problems (error ${response.status}). Try again later.`,
+			);
 		}
 		return response;
 	}

@@ -9,10 +9,10 @@ import { sanitizeSettings, WatchlistNotesSettings, WatchlistNotesSettingTab } fr
 import { forgetFailures } from './sources';
 
 // One command per type, so each can have its own hotkey; the ribbon icon offers the same as a menu.
-// Anime joins when its sources are added (milestone 2).
 const CREATE_COMMANDS: { type: MediaType; id: string; name: string; menu: string; icon: string }[] = [
 	{ type: 'movie', id: 'create-movie-note', name: 'Create movie note', menu: 'Movie', icon: 'film' },
 	{ type: 'tv', id: 'create-tv-show-note', name: 'Create TV show note', menu: 'TV show', icon: 'tv' },
+	{ type: 'anime', id: 'create-anime-note', name: 'Create anime note', menu: 'Anime', icon: 'sparkles' },
 ];
 
 export default class WatchlistNotesPlugin extends Plugin {
