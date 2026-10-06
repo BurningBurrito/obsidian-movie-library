@@ -43,7 +43,7 @@ describe('library tables', () => {
 	});
 
 	it('has the agreed columns for each type, with the poster column that accepts every image form', () => {
-		const common = ['AS Poster', 'AS Title', 'year AS Year', 'genre AS Genre', 'file.link AS Note', 'choice(watched, "🟩", "🟥") AS Watched'];
+		const common = ['AS Poster', 'AS Title', 'year AS Year', 'genre AS Genre', 'file.link AS Note', 'choice(watched, "🟩", "🟥") AS Watched,', 'owned AS Owned,', 'streaming AS Streaming\nFROM'];
 		const own = { movie: ['director AS Director'], tv: ['creator AS Creator'], anime: ['format AS Format', 'studio AS Studio'] } as const;
 		for (const type of ['movie', 'tv', 'anime'] as const) {
 			const query = tableQuery(type, 'X', 'english');

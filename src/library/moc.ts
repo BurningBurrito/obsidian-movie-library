@@ -52,7 +52,10 @@ export function tableQuery(type: MediaType, folder: string, animeTitle: AnimeTit
 		...MIDDLE_COLUMNS[type].map((column) => `  ${column},`),
 		'  genre AS Genre,',
 		'  file.link AS Note,',
-		'  choice(watched, "🟩", "🟥") AS Watched',
+		'  choice(watched, "🟩", "🟥") AS Watched,',
+		// Typed by hand, like Library Notes' AudioBook / EBook: 🟩, 🟥, or N/A; a service name for streaming.
+		'  owned AS Owned,',
+		'  streaming AS Streaming',
 		`FROM "${from}"`,
 		`SORT ${title} ASC`,
 		'```',

@@ -386,7 +386,9 @@ Watch Library/
   - `Severance (2022) - tvmaze-44933.jpg`
   - `Frieren Beyond Journey's End (2023) - mal-52991.jpg` (Tenrai and Jikan share MyAnimeList IDs)
   - `Inception (2010) - imdb-tt1375666.jpg` (OMDb)
-- Poster sizes: TMDB `w500`, TVmaze `original`, MyAnimeList `large`, OMDb as given (300 px wide). Checked as in
+- Poster sizes: TMDB `w500`, TVmaze `medium` (210×295, about 15 KB; its only other size is the 2000×3000 original,
+  1.3 MB for Severance; user 2026-10-06: "smaller size is fine"), MyAnimeList `large` (425×600), OMDb as given (300 px
+  wide). Checked as in
   Library Notes (real image bytes, > 1 KB), saved with `vault.createBinary`, an existing file is reused, and no poster
   means the note is still created with a notice.
 
@@ -423,6 +425,8 @@ cover: {{coverUrl}}
 localCover: {{localCover}}
 watched: false
 rating: N/A
+owned: N/A
+streaming: N/A
 source: {{source}}
 sourceUrl: {{sourceUrl}}
 created: {{date:YYYY-MM-DD HH:mm:ss}}
@@ -439,12 +443,12 @@ link:
 ### Built-in TV show template
 Frontmatter: `tags: [📺TVShow]`, `title`, `year`, `firstAired`, `lastAired`, `status`, `creator`, `network`,
 `seasons`, `episodes`, `cast`, `genre`, `score`, `description`, `cover`, `localCover`, `watched: false`,
-`rating: N/A`, `source`, `sourceUrl`, `created`, `link` (same layout and body as the movie template).
+`rating: N/A`, `owned: N/A`, `streaming: N/A`, `source`, `sourceUrl`, `created`, `link` (same layout and body as the movie template).
 
 ### Built-in anime template
 Frontmatter: `tags: [🎌Anime]`, `title`, `englishTitle`, `romajiTitle`, `japaneseTitle`, `format`, `year`, `episodes`,
 `status`, `firstAired`, `lastAired`, `studio`, `genre`, `score`, `description`, `cover`, `localCover`,
-`watched: false`, `rating: N/A`, `source`, `sourceUrl`, `created`, `link` (same body).
+`watched: false`, `rating: N/A`, `owned: N/A`, `streaming: N/A`, `source`, `sourceUrl`, `created`, `link` (same body).
 
 ### Template variables
 Same engine as Library Notes: lists become list properties, numbers stay numbers, text is quoted when needed, unknown
@@ -487,7 +491,9 @@ TABLE WITHOUT ID
   director AS Director,
   genre AS Genre,
   file.link AS Note,
-  choice(watched, "🟩", "🟥") AS Watched
+  choice(watched, "🟩", "🟥") AS Watched,
+  owned AS Owned,
+  streaming AS Streaming
 FROM "Watch Library/Movies"
 SORT default(title, file.name) ASC
 ```
@@ -502,7 +508,9 @@ TABLE WITHOUT ID
   creator AS Creator,
   genre AS Genre,
   file.link AS Note,
-  choice(watched, "🟩", "🟥") AS Watched
+  choice(watched, "🟩", "🟥") AS Watched,
+  owned AS Owned,
+  streaming AS Streaming
 FROM "Watch Library/TV Shows"
 SORT default(title, file.name) ASC
 ```
@@ -518,7 +526,9 @@ TABLE WITHOUT ID
   studio AS Studio,
   genre AS Genre,
   file.link AS Note,
-  choice(watched, "🟩", "🟥") AS Watched
+  choice(watched, "🟩", "🟥") AS Watched,
+  owned AS Owned,
+  streaming AS Streaming
 FROM "Watch Library/Anime"
 SORT default(englishTitle, default(title, file.name)) ASC
 ```
@@ -543,15 +553,17 @@ TABLE WITHOUT ID
   default(director, default(creator, studio)) AS "Director / Creator / Studio",
   genre AS Genre,
   file.link AS Note,
-  choice(watched, "🟩", "🟥") AS Watched
+  choice(watched, "🟩", "🟥") AS Watched,
+  owned AS Owned,
+  streaming AS Streaming
 FROM "Watch Library/Movies" OR "Watch Library/TV Shows" OR "Watch Library/Anime"
 SORT default(title, file.name) ASC
 ```
 
-**Extra columns [Q3]** like Library Notes' AudioBook / EBook. Possible: **Owned** (🟩 / 🟥 / N/A, e.g. on disc or
-digital) and **Streaming** (text such as "Netflix", or N/A), each a template property with `N/A` and a column in all
-tables. Filling Streaming automatically would need TMDB's watch-provider data, which comes from JustWatch and has its
-own attribution rules, so it's not proposed.
+**Extra columns [Q3], decided: Owned and Streaming** (like Library Notes' AudioBook / EBook), in all three tables after
+Watched. `owned` is typed by hand as 🟩 / 🟥 / N/A (e.g. on disc or digital); `streaming` holds a service name such as
+"Netflix", or N/A. Both start as `N/A` in the templates. Filling Streaming automatically would need TMDB's
+watch-provider data, which comes from JustWatch and has its own attribution rules, so it isn't planned.
 
 ## 11. Watched toggle
 As Toggle read status: `processFrontMatter` flips only `watched` (missing → true); notice "Marked "Inception" as
@@ -618,7 +630,7 @@ or MyAnimeList accounts · bulk import · automatic streaming availability.
 | --- | --- | --- |
 | Q1 | Name / ID | **Watchlist Notes**, `watchlist-notes`; public GitHub repository **`obsidian-movie-library`** (user, 2026-10-06) |
 | Q2 | Three tables (Movies, TV shows, Anime) or one table with a Type column | **Three tables** |
-| Q3 | Extra columns: anime **Format**; **Owned** / **Streaming** like AudioBook / EBook | Format **yes**; Owned / Streaming **still open** (no recommendation was given; asked at the end of Phase 3) |
+| Q3 | Extra columns: anime **Format**; **Owned** / **Streaming** like AudioBook / EBook | Format **yes**; Owned / Streaming **yes** (user, 2026-10-06): `owned: N/A` and `streaming: N/A` in all three templates, typed by hand (🟩 / 🟥 / N/A; a service name), columns after Watched in all three tables |
 | Q4 | `rating` = your rating (`N/A`) and `score` = the source's score | **Yes** |
 | Q5 | "Create copy" names the copy `Title (Year)` instead of `Title 2` | **Yes** |
 | Q6 | Everything else in §6–§14 | **Approved** as written |

@@ -1,6 +1,5 @@
 # Status: Watchlist Notes (`watchlist-notes`)
-**Current phase:** Phase 3 — Scaffold: **complete** (local commit, nothing pushed); waiting for the user's Phase 3
-check in the test vault and one open question (Owned / Streaming columns) before Phase 4
+**Current phase:** Phase 4 — Build and test: **milestone 1 in progress** (TVmaze, Create TV show note)
 **Last updated:** 2026-10-06
 
 ## Done
@@ -94,10 +93,23 @@ check in the test vault and one open question (Owned / Streaming columns) before
       sample books + library note for comparison; `Start here.md` with the Phase 3 checks
 - [x] git: new repository (branch `main`), identity BurningBurrito with the GitHub noreply address (as Library
       Notes), first commit local only; commit history checked for attribution lines
+- [x] User tested the Phase 3 vault (2026-10-06). Reported: (1) "the movies creates a separate folder for the genre
+      inside the movies folder (Sci-fi)"; (2) "no posters for the movies; there was for the show and anime". Both came
+      from the **hand-made sample data**, not the plugin (the only file the plugin created was the library note):
+      (1) `Movies/Sci-fi/` was a test of notes in a user-made subfolder; renamed to `Movies/Subfolder test/` and
+      explained in `Start here.md` (the plugin never creates subfolders); (2) both movie samples were deliberately
+      poster-less (no poster / missing file) because movie posters need TMDB/OMDb keys (milestone 3). Added
+      *Charade* (1963) with a **public-domain** poster from Wikimedia Commons (license checked: "Public domain",
+      not copyrighted) so a movie row shows a poster now
+- [x] Q3 answered (user: "yes"): **Owned** and **Streaming** columns after Watched in all three tables (`owned AS
+      Owned`, `streaming AS Streaming`), `owned: N/A` / `streaming: N/A` in the templates (DESIGN.md §9, §10).
+      Sample notes given values. Tests updated (38 pass)
+- [x] TVmaze poster size (user: "smaller size is fine"): **medium**, 210×295, ~15 KB (TVmaze's only other size is the
+      2000×3000 original, 1.3 MB). Sample poster replaced. Note: smaller than MyAnimeList (425 px) and TMDB (500 px);
+      sharp in the table (80 px), soft if embedded full-size in a note
 
 ## In progress
-- [ ] User: Phase 3 check in the test vault (`test-vault/Start here.md`)
-- [ ] User: Owned / Streaming columns (Q3, still open)
+- [ ] Phase 4 milestone 1 (see Next)
 
 ## Next
 - [ ] Phase 4 — build and test, in milestones, each tested in the test vault with Library Notes alongside:
@@ -128,14 +140,13 @@ check in the test vault and one open question (Owned / Streaming columns) before
   obsidian-movie-library as the public git before we publish"). Name checked free on the account. The repo is
   still created only in Phase 5, after confirming. Plugin name and ID unchanged (a repo name may differ from the
   ID and may contain "obsidian"; the ID may not). Used in the User-Agent
-- Q2 **Three tables** (Movies, TV shows, Anime) in one marked block; Q3 anime **Format** column yes
+- Q2 **Three tables** (Movies, TV shows, Anime) in one marked block; Q3 anime **Format** column yes; **Owned** and
+  **Streaming** columns yes (user, 2026-10-06)
+- TVmaze posters saved at the **medium** size (user, 2026-10-06)
 - Q4 `rating` = the user's own rating (`N/A`), source score in `score`; Q5 "Create copy" → `Title (Year)`
 - Q6 rest of DESIGN.md §6–§14 approved as written
 - Scaffold: developer checks left out until Phase 4 (they test the sources); README is a stub until Phase 5
 
 ## Open questions / blockers
-- Q3 (open): add **Owned** (🟩 / 🟥 / N/A) and **Streaming** (text) columns like AudioBook / EBook?
-- Phase 4 proposal: TVmaze's "original" poster can be large (Severance: 1.3 MB vs 60–180 KB for MyAnimeList
-  posters); consider a smaller size for TVmaze
 - Risk: Tenrai is in beta with a v2 planned; Jikan is down. Anime without a key depends on one of them working
 - To verify in Phase 4 with the user's keys: OMDb `Poster` field on a free key; TMDB with a real token
