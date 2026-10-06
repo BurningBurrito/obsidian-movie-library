@@ -11,7 +11,7 @@ export default class WatchlistNotesPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 		// No contact email; the repo link identifies the plugin to each service.
-		setUserAgent(`WatchlistNotes/${this.manifest.version} (+https://github.com/BurningBurrito/watchlist-notes)`);
+		setUserAgent(`WatchlistNotes/${this.manifest.version} (+https://github.com/BurningBurrito/obsidian-movie-library)`);
 
 		this.addCommand({
 			id: 'toggle-watched-status',

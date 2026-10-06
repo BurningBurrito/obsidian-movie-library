@@ -299,7 +299,8 @@ Notes (books) and Media DB (§3).
 | Markers | `%% library-notes:start %%` / `end` | `%% watchlist-notes:start %%` / `end` |
 | Template copies | `Templates/Book note.md` | `Templates/Movie note.md`, `Templates/TV show note.md`, `Templates/Anime note.md` |
 | Default folder / note | `Library/`, `Library MOC` | `Watch Library/`, `Watch Library MOC` |
-| User-Agent | `LibraryNotes/…` | `WatchlistNotes/<version> (+https://github.com/BurningBurrito/watchlist-notes)` |
+| User-Agent | `LibraryNotes/…` | `WatchlistNotes/<version> (+https://github.com/BurningBurrito/obsidian-movie-library)` |
+| GitHub repository | `BurningBurrito/library-notes` | `BurningBurrito/obsidian-movie-library` (user, 2026-10-06) |
 | Test vault folder | `test-vault/.obsidian/plugins/library-notes` | `test-vault/.obsidian/plugins/watchlist-notes` |
 
 ## 6. Commands and ribbon
@@ -615,7 +616,7 @@ or MyAnimeList accounts · bulk import · automatic streaming availability.
 
 | # | Question | Decision |
 | --- | --- | --- |
-| Q1 | Name / ID | **Watchlist Notes**, `watchlist-notes` |
+| Q1 | Name / ID | **Watchlist Notes**, `watchlist-notes`; public GitHub repository **`obsidian-movie-library`** (user, 2026-10-06) |
 | Q2 | Three tables (Movies, TV shows, Anime) or one table with a Type column | **Three tables** |
 | Q3 | Extra columns: anime **Format**; **Owned** / **Streaming** like AudioBook / EBook | Format **yes**; Owned / Streaming **still open** (no recommendation was given; asked at the end of Phase 3) |
 | Q4 | `rating` = your rating (`N/A`) and `score` = the source's score | **Yes** |

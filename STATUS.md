@@ -111,7 +111,7 @@ check in the test vault and one open question (Owned / Streaming columns) before
   - M4: Refresh TMDB notes (due after 5 months, reminder, confirmation, summary)
   - M5: recorded-response tests for every source, developer checks, error cases (offline, no results, rate limits,
     slow responses, invalid keys)
-- [ ] Phase 5: GitHub repo and docs (confirm name and visibility first)
+- [ ] Phase 5: GitHub repo `obsidian-movie-library`, public (confirm before creating) and docs
 - [ ] Phase 6: release and community submission (show everything before submitting)
 
 ## Decisions made
@@ -124,6 +124,10 @@ check in the test vault and one open question (Owned / Streaming columns) before
   or otherwise approved by TMDB."
 - R6 TV: TVmaze → TMDB → OMDb. R7 Movies: TMDB → OMDb; without a key, explain and link to setup
 - Q1 Name **Watchlist Notes**, ID **`watchlist-notes`** (user, 2026-10-06). The ID can never change after release
+- Public GitHub repository: **`BurningBurrito/obsidian-movie-library`** (user, 2026-10-06: "name this
+  obsidian-movie-library as the public git before we publish"). Name checked free on the account. The repo is
+  still created only in Phase 5, after confirming. Plugin name and ID unchanged (a repo name may differ from the
+  ID and may contain "obsidian"; the ID may not). Used in the User-Agent
 - Q2 **Three tables** (Movies, TV shows, Anime) in one marked block; Q3 anime **Format** column yes
 - Q4 `rating` = the user's own rating (`N/A`), source score in `score`; Q5 "Create copy" → `Title (Year)`
 - Q6 rest of DESIGN.md §6–§14 approved as written
