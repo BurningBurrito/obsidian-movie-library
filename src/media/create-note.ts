@@ -181,7 +181,8 @@ async function explainMissingSource(plugin: WatchlistNotesPlugin, type: MediaTyp
 function pickTitle(app: App, outcome: SearchOutcome): Promise<SearchResult | null> {
 	return pickItem(app, {
 		items: outcome.results,
-		placeholder: `${outcome.results.length} results from ${outcome.source.name}. Type to filter.`,
+		// Say it where the user is looking when another source answered than the one they chose.
+		placeholder: `${outcome.results.length} results from ${outcome.source.name}${outcome.fallback ? ` (instead of ${outcome.fallback.from})` : ''}. Type to filter.`,
 		emptyText: 'No result matches what you typed.',
 		matches: ({ title }, query) =>
 			[title.title, title.originalTitle, title.englishTitle, title.romajiTitle, title.japaneseTitle, title.network, ...title.studios].some(

@@ -15,6 +15,7 @@ export const ui = {
 	/** Status lines the search window showed ("Searching TVmaze…"). */
 	progress: [] as string[],
 	pickLists: [] as unknown[][],
+	pickPlaceholders: [] as string[],
 	choices: [] as { title: string; message: string; labels: string[] }[],
 };
 
@@ -35,6 +36,7 @@ export function resetUi() {
 	ui.searchOptions.length = 0;
 	ui.progress.length = 0;
 	ui.pickLists.length = 0;
+	ui.pickPlaceholders.length = 0;
 	ui.choices.length = 0;
 }
 
@@ -64,8 +66,9 @@ export async function openSearchModal<T>(
 }
 
 // pick-modal.ts
-export function pickItem<T>(_app: unknown, options: { items: T[] }): Promise<T | null> {
+export function pickItem<T>(_app: unknown, options: { items: T[]; placeholder: string }): Promise<T | null> {
 	ui.pickLists.push(options.items);
+	ui.pickPlaceholders.push(options.placeholder);
 	const step = next('pick');
 	return Promise.resolve(step ? (options.items[step.index] ?? null) : null);
 }

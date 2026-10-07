@@ -88,6 +88,16 @@ describe('creating an anime note (recorded Tenrai answers)', () => {
 		assert.ok(notices.includes('Tenrai is having problems (error 503). Try again later.\nShowing results from Jikan instead.'));
 	});
 
+	it('says in the results list when another source answered than the one chosen', async () => {
+		fake('api.jikan.moe', 'network-error');
+		userSearches('your name', 'jikan');
+		userPicks(0);
+		await createTitleNote(plugin(), 'anime');
+		assert.match(ui.pickPlaceholders[0] ?? '', /^\d+ results from Tenrai \(instead of Jikan\)\. Type to filter\.$/);
+		assert.ok(notices.includes('Could not reach Jikan. Check your internet connection and try again.\nShowing results from Tenrai instead.'));
+		assert.equal(frontmatter(app, 'Watch Library/Anime/Your Name.md').source, 'Tenrai', 'the note says which source answered');
+	});
+
 	it('shows Tenrai’s problem in the search window when Jikan is down too', async () => {
 		fake('api.tenrai.org', json(504, { message: 'Failed to connect to MyAnimeList' }));
 		fake('api.jikan.moe', 'network-error');

@@ -1,6 +1,5 @@
 # Status: Watchlist Notes (`watchlist-notes`)
-**Current phase:** Phase 4 — Build and test: **milestone 2 (anime) built and tested offline; waiting for the user's
-test in the vault** (`test-vault/Start here.md`, "Milestone 2 checks")
+**Current phase:** Phase 4 — Build and test: **milestone 3 (movies: TMDB, OMDb) in progress, without keys**
 **Last updated:** 2026-10-06
 
 ## Done
@@ -158,8 +157,16 @@ test in the vault** (`test-vault/Start here.md`, "Milestone 2 checks")
     cdn.myanimelist.net, content-type header only; one scan hit ("toNY") is inside a poster's base64 bytes
   - build (main.js 38,343 bytes), lint, lint without moment types: clean
 
+- [x] User tested milestone 2 (2026-10-06): steps 1–2 passed; "Jikan actually worked". Checked: every anime note in
+      the vault has `source: Tenrai` (none from Jikan), and Jikan still times out here on every route (02:46 UTC),
+      so the Jikan button most likely **fell back to Tenrai**, signalled only by a notice. Fix: the results list now
+      says "N results from Tenrai (instead of Jikan)"; test added (92 pass). To confirm in the vault: a note created
+      after choosing Jikan says which source answered in `source`
+- [x] User (2026-10-06): **skip the TMDB and OMDb keys for now**; build milestone 3 anyway, tested with stand-in answers
+      in the services' documented formats; live check with the user's keys later
+
 ## In progress
-- [ ] User: milestone 2 test in the vault (`test-vault/Start here.md`, "Milestone 2 checks")
+- [ ] Milestone 3 (TMDB and OMDb, without keys)
 
 ## Next
 - [ ] Phase 4 — build and test, in milestones, each tested in the test vault with Library Notes alongside:
