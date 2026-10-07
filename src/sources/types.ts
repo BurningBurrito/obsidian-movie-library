@@ -126,6 +126,8 @@ export interface MediaSource {
 	types: readonly MediaType[];
 	/** Spacing for this source's API requests. */
 	throttle?: ThrottleRule;
+	/** Needs the user's own key (TMDB, OMDb); such sources have their own settings section and Check button. */
+	needsKey?: boolean;
 	/** Whether the source can be used: always for the free ones; once a key is set for the others. */
 	isConfigured(plugin: WatchlistNotesPlugin): boolean;
 	/** Search. Resolves with [] when nothing matches; throws a MediaError on failure. */

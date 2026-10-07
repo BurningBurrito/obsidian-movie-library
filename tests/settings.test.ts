@@ -21,6 +21,9 @@ describe('settings', () => {
 			useFallback: true,
 			hideAdult: true,
 			animeTitle: 'english',
+			language: 'en',
+			tmdbKeySecret: '',
+			omdbKeySecret: '',
 		});
 	});
 
@@ -46,6 +49,8 @@ describe('settings', () => {
 		assert.equal(settings.libraryNoteName, DEFAULT_SETTINGS.libraryNoteName);
 		assert.equal(settings.animeTitle, 'english');
 		assert.equal(settings.openAfterCreate, false);
+		assert.equal(sanitizeSettings({ language: 'English' }).language, 'en');
+		assert.equal(sanitizeSettings({ language: '' }).language, '', 'no preference is allowed');
 	});
 
 	it('needs a separate folder for each type and for posters', () => {

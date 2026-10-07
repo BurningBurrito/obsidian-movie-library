@@ -1,4 +1,5 @@
-import { App, Notice, PluginSettingTab, SettingDefinitionItem, SettingGroupItem } from 'obsidian';
+import { App, Notice, PluginSettingTab, SecretComponent, SettingDefinitionItem, SettingGroupItem } from 'obsidian';
+import tmdbLogo from '../assets/tmdb-logo.svg';
 import { dataviewMessage, dataviewStatus } from './core/dataview';
 import { toMediaError } from './core/errors';
 import { ensureFolder, normalizeFolder } from './core/notes';
@@ -8,6 +9,10 @@ import type WatchlistNotesPlugin from './main';
 import { BUILT_IN_TEMPLATES, TEMPLATE_COPY_PATHS } from './media/templates';
 import { MEDIA_TYPES, MEDIA_WORDS, MediaType } from './media/types';
 import { configuredSources, getSource, SOURCE_ORDER, SOURCES } from './sources';
+import { jikan, MYANIMELIST, tenrai } from './sources/myanimelist';
+import { omdb } from './sources/omdb';
+import { tmdb } from './sources/tmdb';
+import { tvmaze } from './sources/tvmaze';
 import type { SourceId } from './sources/types';
 
 /** Which title names anime notes and the anime table. */
@@ -41,6 +46,12 @@ export interface WatchlistNotesSettings {
 	/** Leave out titles rated for adults (MyAnimeList's R+ and Rx; TMDB's adult flag). */
 	hideAdult: boolean;
 	animeTitle: AnimeTitle;
+	/** Two-letter code for TMDB's titles and descriptions; "" for TMDB's default. */
+	language: string;
+
+	/** Names of the secrets in Obsidian's keychain that hold the keys (not the keys themselves). */
+	tmdbKeySecret: string;
+	omdbKeySecret: string;
 }
 
 export const DEFAULT_SETTINGS: WatchlistNotesSettings = {
@@ -62,6 +73,10 @@ export const DEFAULT_SETTINGS: WatchlistNotesSettings = {
 	useFallback: true,
 	hideAdult: true,
 	animeTitle: 'english',
+	language: 'en',
+
+	tmdbKeySecret: '',
+	omdbKeySecret: '',
 };
 
 /** The settings that belong to each type. */
@@ -72,6 +87,10 @@ export const TYPE_SETTINGS = {
 } as const satisfies Record<MediaType, { template: keyof WatchlistNotesSettings; source: keyof WatchlistNotesSettings }>;
 
 const ANIME_TITLES: Record<AnimeTitle, string> = { english: 'English', romaji: 'Romaji', japanese: 'Japanese' };
+const LANGUAGE_CODE = /^[a-z]{2}$/;
+
+/** TMDB's attribution notice, worded as its API Terms of Use (§3) require. */
+export const TMDB_NOTICE = 'This product uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.';
 
 // The folders inside the library folder; each needs its own.
 const FOLDER_KEYS = ['moviesFolder', 'tvFolder', 'animeFolder', 'postersFolder'] as const;
@@ -91,6 +110,7 @@ export function sanitizeSettings(saved: Partial<WatchlistNotesSettings> | null):
 		if (!SOURCE_ORDER[type].includes(settings[key])) settings[key] = DEFAULT_SETTINGS[key];
 	}
 	if (!(settings.animeTitle in ANIME_TITLES)) settings.animeTitle = DEFAULT_SETTINGS.animeTitle;
+	if (settings.language && !LANGUAGE_CODE.test(settings.language)) settings.language = DEFAULT_SETTINGS.language;
 	return settings;
 }
 
@@ -163,6 +183,9 @@ export class WatchlistNotesSettingTab extends PluginSettingTab {
 			{ type: 'group', heading: 'Library note', items: this.libraryNoteItems() },
 			{ type: 'group', heading: 'Templates', items: this.templateItems() },
 			{ type: 'group', heading: 'Sources', items: this.sourceItems() },
+			{ type: 'group', heading: 'TMDB', items: this.tmdbItems() },
+			{ type: 'group', heading: 'OMDb', items: this.omdbItems() },
+			{ type: 'group', heading: 'Credits', items: this.creditItems() },
 		];
 	}
 
@@ -275,7 +298,7 @@ export class WatchlistNotesSettingTab extends PluginSettingTab {
 				},
 			};
 		};
-		const freeSources = SOURCES.filter((source) => source.isConfigured(this.plugin)).map((source) => source.id);
+		const freeSources = SOURCES.filter((source) => !source.needsKey).map((source) => source.id);
 		return [
 			...MEDIA_TYPES.map(defaultSourceItem).filter((item): item is SettingGroupItem<SettingKey> => item !== null),
 			{
@@ -302,6 +325,127 @@ export class WatchlistNotesSettingTab extends PluginSettingTab {
 						if (source) setting.addButton((button) => button.setButtonText(source.name).onClick(() => void this.checkSource(id)));
 					}
 				},
+			},
+		];
+	}
+
+	private tmdbItems(): SettingGroupItem<SettingKey>[] {
+		return [
+			this.keyItem(
+				'tmdbKeySecret',
+				'Read Access Token or API key',
+				createFragment((frag) => {
+					frag.appendText('Optional; movies need TMDB or OMDb. TMDB is free for non-commercial use: create an account at ');
+					frag.createEl('a', { text: 'themoviedb.org', href: 'https://www.themoviedb.org/signup' });
+					frag.appendText(', then under ');
+					frag.createEl('a', { text: 'Settings → API', href: 'https://www.themoviedb.org/settings/api' });
+					frag.appendText(
+						' request a developer key and copy the "API Read Access Token" (it’s sent in a header, never in a web address). The key is kept in Obsidian’s keychain, not in this plugin’s settings file. Searches send what you type, and your key, to TMDB.',
+					);
+				}),
+			),
+			{
+				name: 'Check TMDB key',
+				desc: 'Makes one small request to TMDB with your key.',
+				visible: () => this.plugin.getSecret(this.plugin.settings.tmdbKeySecret) !== '',
+				action: () => void this.checkSource('tmdb'),
+			},
+			{
+				name: 'Preferred language',
+				desc: 'Two-letter code, such as en or es, for TMDB’s titles and descriptions. The other sources are in English. Leave empty for TMDB’s default.',
+				control: {
+					type: 'text',
+					key: 'language',
+					placeholder: 'en',
+					validate: (value) =>
+						!value.trim() || LANGUAGE_CODE.test(value.trim()) ? undefined : 'Use a two-letter lowercase code, such as en.',
+				},
+			},
+		];
+	}
+
+	private omdbItems(): SettingGroupItem<SettingKey>[] {
+		return [
+			this.keyItem(
+				'omdbKeySecret',
+				'API key',
+				createFragment((frag) => {
+					frag.appendText('Optional; a backup for movies and TV shows. Request a free key (1,000 requests a day) at ');
+					frag.createEl('a', { text: 'omdbapi.com', href: 'https://www.omdbapi.com/apikey.aspx' });
+					frag.appendText(
+						'; it arrives by email. The key is kept in Obsidian’s keychain. OMDb only accepts it in the web address of each request, so it’s sent to OMDb with what you type.',
+					);
+				}),
+			),
+			{
+				name: 'Check OMDb key',
+				desc: 'Makes one small request to OMDb with your key.',
+				visible: () => this.plugin.getSecret(this.plugin.settings.omdbKeySecret) !== '',
+				action: () => void this.checkSource('omdb'),
+			},
+		];
+	}
+
+	/** A key kept in Obsidian's keychain; the settings store only the secret's name. */
+	private keyItem(key: 'tmdbKeySecret' | 'omdbKeySecret', name: string, desc: DocumentFragment): SettingGroupItem<SettingKey> {
+		return {
+			name,
+			desc,
+			render: (setting) => {
+				setting.addComponent((el) =>
+					new SecretComponent(this.app, el).setValue(this.plugin.settings[key]).onChange(async (value) => {
+						this.plugin.settings[key] = value;
+						await this.plugin.saveSettings();
+						// The source lists (dropdowns, search window) depend on which keys are set.
+						this.update();
+					}),
+				);
+			},
+		};
+	}
+
+	private creditItems(): SettingGroupItem<SettingKey>[] {
+		return [
+			{
+				name: 'TMDB',
+				desc: createFragment((frag) => {
+					frag.appendText(`${TMDB_NOTICE} Movie, TV, and anime information and posters from `);
+					frag.createEl('a', { text: tmdb.name, href: 'https://www.themoviedb.org' });
+					frag.appendText(' when you use your TMDB key.');
+				}),
+				render: (setting) => {
+					// TMDB's approved logo, unchanged and bundled with the plugin; smaller than the plugin's own name.
+					const link = setting.controlEl.createEl('a', { href: 'https://www.themoviedb.org', attr: { 'aria-label': 'TMDB' } });
+					link.createEl('img', { cls: 'watchlist-notes-tmdb-logo', attr: { src: tmdbLogo, alt: 'TMDB' } });
+				},
+			},
+			{
+				name: 'TVmaze',
+				desc: createFragment((frag) => {
+					frag.appendText('TV show information and posters from ');
+					frag.createEl('a', { text: tvmaze.name, href: 'https://www.tvmaze.com' });
+					frag.appendText(', licensed CC BY-SA. Each note links to the show’s page on TVmaze.');
+				}),
+			},
+			{
+				name: 'MyAnimeList',
+				desc: createFragment((frag) => {
+					frag.appendText('Anime information and posters from ');
+					frag.createEl('a', { text: MYANIMELIST, href: 'https://myanimelist.net' });
+					frag.appendText(', through the unofficial ');
+					frag.createEl('a', { text: tenrai.name, href: 'https://tenrai.org' });
+					frag.appendText(' and ');
+					frag.createEl('a', { text: jikan.name, href: 'https://jikan.moe' });
+					frag.appendText(' services. Not affiliated with MyAnimeList. Each note links to the anime’s MyAnimeList page.');
+				}),
+			},
+			{
+				name: 'OMDb',
+				desc: createFragment((frag) => {
+					frag.appendText('Movie and TV information from ');
+					frag.createEl('a', { text: omdb.name, href: 'https://www.omdbapi.com' });
+					frag.appendText(' when you use your OMDb key, licensed CC BY-NC 4.0.');
+				}),
 			},
 		];
 	}

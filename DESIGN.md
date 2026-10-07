@@ -590,6 +590,14 @@ watched." / "…as unwatched."; offered only for notes in the three type folders
 - README and settings explain TMDB's 6-month term; the README also says that if you stop using TMDB, its terms ask
   you to delete TMDB content, and how to find those notes (`source: TMDB`).
 
+### Tests for TMDB and OMDb (added 2026-10-06, milestone 3)
+The other sources' tests replay answers recorded from the live services. TMDB and OMDb can't: recorded TMDB answers in
+a public repository would keep TMDB data far longer than its 6-month limit, and keyed requests would carry a key. Their
+tests use **hand-written answers in each service's documented format** (TMDB: field names and structure from its
+OpenAPI spec, `developer.themoviedb.org/openapi/tmdb-api.json`; OMDb: the field names it documents), with descriptions
+written for the tests and made-up poster paths (`tests/support/stand-ins.ts`). The recording tool refuses TMDB and OMDb
+hosts. The live check happens in the test vault with the user's keys and isn't recorded.
+
 ## 13. Settings layout
 
 **(General)** Library folder `Watch Library` · Movies folder `Movies` · TV shows folder `TV Shows` · Anime folder

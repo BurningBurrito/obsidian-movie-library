@@ -81,6 +81,11 @@ export async function handleRequest(request: Request): Promise<FakeResponse> {
 
 	const key = `${request.method} ${request.url}`;
 	if (RECORD) {
+		// TMDB's terms don't allow keeping its data longer than six months, and keyed requests would
+		// record the user's key; TMDB and OMDb tests use hand-written answers (support/stand-ins.ts).
+		if (/themoviedb\.org|tmdb\.org|omdbapi\.com|media-amazon\.com/.test(request.url)) {
+			throw new Error(`Not recording ${new URL(request.url).host}: use stand-in answers (tests/support/stand-ins.ts).`);
+		}
 		const response = await fetch(request.url, { method: request.method, headers: request.headers, body: request.body });
 		const buffer = Buffer.from(await response.arrayBuffer());
 		const type = response.headers.get('content-type') ?? '';

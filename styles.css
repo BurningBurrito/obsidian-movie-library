@@ -68,3 +68,10 @@
 	font-size: var(--font-ui-smaller);
 	color: var(--text-muted);
 }
+
+/* Credits: TMDB's logo, kept smaller than the plugin's own name as TMDB's terms ask. */
+.watchlist-notes-tmdb-logo {
+	height: 14px;
+	width: auto;
+	display: block;
+}

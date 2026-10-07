@@ -58,6 +58,8 @@ const context = await esbuild.context({
 	// DEV_BUILD is true in `npm run dev` and false in release builds, so code
 	// inside `if (DEV_BUILD)` (developer checks) is left out of released main.js.
 	define: { DEV_BUILD: prod ? 'false' : 'true' },
+	// The TMDB logo (assets/tmdb-logo.svg) is bundled unchanged as a data URL, so showing it needs no request.
+	loader: { '.svg': 'dataurl' },
 	outfile: 'main.js',
 	minify: prod,
 	plugins: prod ? [] : [copyToTestVault],

@@ -1,5 +1,6 @@
 # Status: Watchlist Notes (`watchlist-notes`)
-**Current phase:** Phase 4 — Build and test: **milestone 3 (movies: TMDB, OMDb) in progress, without keys**
+**Current phase:** Phase 4 — Build and test: **milestone 3 (movies) built without keys and tested offline**; live
+check with the user's keys later
 **Last updated:** 2026-10-06
 
 ## Done
@@ -165,13 +166,37 @@
 - [x] User (2026-10-06): **skip the TMDB and OMDb keys for now**; build milestone 3 anyway, tested with stand-in answers
       in the services' documented formats; live check with the user's keys later
 
+- [x] **Milestone 3** (movies: TMDB and OMDb), built without keys, local commit:
+  - **TMDB** (`sources/tmdb.ts`; movies, TV, anime): the Read Access Token goes in `Authorization: Bearer` (never in a
+    URL); the older API key in `api_key=` (TMDB's only option for it). Search with language, `include_adult` from
+    "Hide adult titles", year (`primary_release_year` / `first_air_date_year`); IMDb ID via `/find`; details with
+    `append_to_response=credits` (+`external_ids` for TV): directors, top-5 cast in billing order, runtime, genres,
+    creators, network, seasons, episodes, status, IMDb ID; anime = animated series and films, Japanese first, English
+    and Japanese titles (TMDB has no romaji), studios; posters `w500`, thumbnails `w154`; key check via
+    `/authentication` ("Validate Key"); 401/status 7 → "TMDB rejected the key…"; 404/34 → no entry; 100 ms spacing
+  - **OMDb** (`sources/omdb.ts`; movies, TV): key in `apikey=` (OMDb's only option); search `s` + `type`; IMDb ID via
+    `i`; details with `plot=full`; "N/A" read as empty; field names read regardless of capitals; `Released`
+    "16 Jul 2010" → date; series years "2008–2013" → ended / "2019–" → running; Writer → creators for series;
+    errors: not found → no results, too many results, invalid key, **daily limit** ("used up today's 1,000
+    requests"), no key; 250 ms spacing. Formats from OMDb's Swagger file (parameters, `apikey` in the query) and
+    published field lists; live confirmation pending
+  - Settings: **TMDB** (key in Obsidian's keychain with how-to-get steps, Check TMDB key, Preferred language) and
+    **OMDb** (key, Check OMDb key) sections; key-based sources marked `needsKey` (not under "Check sources");
+    **Credits** section: TMDB's approved "Alt short" logo, bundled unchanged as a data URL (sha256 8e7b30f73a40…,
+    the same hash as TMDB's file name; verified in the built main.js), 14 px high, linking to themoviedb.org, with
+    the exact notice from TMDB's API Terms §3; credits for TVmaze (CC BY-SA), MyAnimeList via Tenrai/Jikan, OMDb
+    (CC BY-NC 4.0). `assets/tmdb-logo.svg` kept for the README
+  - Brand names in link texts come from the source modules (`tmdb.name`, …) and a `MYANIMELIST` constant, because
+    the sentence-case lint rule doesn't know these brands (it would lowercase "TVmaze", "OMDb")
+  - Tests: **113 pass offline in 0.28 s** (new: TMDB 9, OMDb 7, movie and backup flows 5) with hand-written answers
+    in each service's documented format (DESIGN.md, "Tests for TMDB and OMDb"); the recording tool refuses TMDB/OMDb hosts
+  - build (main.js 52,017 bytes; hosts: the 13 expected), lint, lint without moment types: clean
+
 ## In progress
-- [ ] Milestone 3 (TMDB and OMDb, without keys)
+- [ ] User: milestone 3 checks 1–3 (no keys) in the vault; checks 4–7 when the keys exist
 
 ## Next
 - [ ] Phase 4 — build and test, in milestones, each tested in the test vault with Library Notes alongside:
-  - M3: TMDB (movies; TV and anime fallback) and OMDb with keys in the keychain, Check buttons, no-key window,
-    Credits with the bundled TMDB logo and notice
   - M4: Refresh TMDB notes (due after 5 months, reminder, confirmation, summary)
   - M5: recorded-response tests for every source, developer checks, error cases (offline, no results, rate limits,
     slow responses, invalid keys)
@@ -201,6 +226,8 @@
 
 ## Open questions / blockers
 - Risk: Tenrai is in beta with a v2 planned; Jikan is down. Anime without a key depends on one of them working
-- To verify in Phase 4 with the user's keys: OMDb `Poster` field on a free key; TMDB with a real token
+- **Pending live check with the user's keys** (user, 2026-10-06: keys later): TMDB with a real Read Access Token and
+  an API key (search, details, credits, `/find`, anime results, posters); OMDb with a free key (field names, the
+  `Poster` field on a free key, the daily-limit message's exact wording)
 - Phase 5: the README needs a heading "Getting a TMDB key" (the "How to get a key" button links to
   `#getting-a-tmdb-key`)

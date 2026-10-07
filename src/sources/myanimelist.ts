@@ -10,6 +10,9 @@ import { emptyTitle, MediaSource, SearchResult, Title } from './types';
 // Tenrai (default, https://tenrai.org) and Jikan (backup, https://jikan.moe). Neither needs an
 // account. Each note links to the anime's MyAnimeList page.
 
+/** The site the anime information comes from (for credits and messages). */
+export const MYANIMELIST = 'MyAnimeList';
+
 const SEARCH_LIMIT = 20;
 // Both can be slow when MyAnimeList is.
 const TIMEOUT_MS = 20_000;

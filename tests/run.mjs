@@ -31,6 +31,7 @@ await esbuild.build({
 	outExtension: { '.js': '.cjs' },
 	logLevel: 'warning',
 	define: { DEV_BUILD: 'false' },
+	loader: { '.svg': 'dataurl' },
 	alias: { obsidian: './tests/support/obsidian.ts' },
 	plugins: [
 		{
