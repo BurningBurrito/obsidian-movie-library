@@ -110,12 +110,17 @@ async function send(url: string, options: RequestOptions): Promise<RequestUrlRes
 		);
 	} catch (err) {
 		if (err instanceof MediaError) throw err;
-		// The URL isn't logged: for some services it contains the user's API key.
-		console.error(`Watchlist Notes: request to ${sourceName} failed`, err);
+		// Neither the URL nor a key is logged: OMDb (and TMDB's older API key) need the key in the URL.
+		console.error(`Watchlist Notes: request to ${sourceName} failed:`, withoutKeys(err instanceof Error ? err.message : String(err)));
 		throw new MediaError('network', `Could not reach ${sourceName}. Check your internet connection and try again.`);
 	} finally {
 		if (slow !== undefined) window.clearTimeout(slow);
 	}
+}
+
+/** Text with any API key in a web address replaced, in case an error message quotes the address. */
+export function withoutKeys(text: string): string {
+	return text.replace(/([?&](?:apikey|api_key)=)[^&\s"']+/gi, '$1[key]');
 }
 
 /** Retry-After in milliseconds: seconds ("120") or a date. */

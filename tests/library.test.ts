@@ -185,7 +185,7 @@ describe('library note in the vault', () => {
 
 	it('says when Dataview is missing or turned off', async () => {
 		for (const [installed, enabled, expected] of [
-			[false, false, /needs the Dataview plugin\. Install it/],
+			[false, false, /need the Dataview plugin\. Install it/],
 			[true, false, /installed but turned off/],
 		] as const) {
 			const app = makeApp();

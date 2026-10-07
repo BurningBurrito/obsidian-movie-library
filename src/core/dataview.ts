@@ -21,9 +21,9 @@ export function dataviewStatus(app: App): DataviewStatus {
 export function dataviewMessage(status: DataviewStatus, libraryNoteName: string): string | null {
 	switch (status) {
 		case 'missing':
-			return `The table in "${libraryNoteName}" needs the Dataview plugin. Install it from Settings → Community plugins, then enable it.`;
+			return `The tables in "${libraryNoteName}" need the Dataview plugin. Install it from Settings → Community plugins, then enable it.`;
 		case 'disabled':
-			return `The table in "${libraryNoteName}" needs the Dataview plugin, which is installed but turned off. Enable it in Settings → Community plugins.`;
+			return `The tables in "${libraryNoteName}" need the Dataview plugin, which is installed but turned off. Enable it in Settings → Community plugins.`;
 		default:
 			return null;
 	}

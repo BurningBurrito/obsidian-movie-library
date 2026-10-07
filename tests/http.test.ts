@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { beforeEach, describe, it } from 'node:test';
-import { clearCache, getJson, httpRequest } from '../src/core/http';
+import { clearCache, getJson, httpRequest, withoutKeys } from '../src/core/http';
 import { fake, json, requests, resetNetwork } from './support/network';
 
 const URL = 'https://api.example/show';
@@ -75,6 +75,13 @@ describe('retries', () => {
 		fake(URL, 'network-error');
 		await assert.rejects(httpRequest(URL, { sourceName: NAME }), /Could not reach TVmaze/);
 		assert.equal(requests.length, 1);
+	});
+
+	it('never logs a key, even if an error message quotes the address', () => {
+		assert.equal(
+			withoutKeys('net::ERR_FAILED https://www.omdbapi.com/?s=dune&apikey=abc12345 and https://api.themoviedb.org/3/x?api_key=0123abcd&page=1'),
+			'net::ERR_FAILED https://www.omdbapi.com/?s=dune&apikey=[key] and https://api.themoviedb.org/3/x?api_key=[key]&page=1',
+		);
 	});
 
 	it('remembers successful answers but not failures', async () => {
