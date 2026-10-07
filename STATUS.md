@@ -1,5 +1,6 @@
 # Status: Watchlist Notes (`watchlist-notes`)
-**Current phase:** Phase 4 — Build and test: **milestone 4 (Refresh TMDB notes) built and tested offline**
+**Current phase:** Phase 5 — GitHub repo and docs: **README written, pre-push checks clean; waiting for the user's
+go-ahead to create the public repo and push**
 **Last updated:** 2026-10-07
 
 ## Done
@@ -210,8 +211,33 @@
     moment types: clean
   - Test vault: `Watch Library/Movies/Refresh test.md` (pretends to be from TMDB, 9 months old) for checks without a key
 
+- [x] User (2026-10-07): "ok, go ahead. next phase." Phase 4 closed; milestone 5 (in-app developer checks) **skipped** as
+      recommended (Library Notes already proved the User-Agent on this Obsidian; tables checked by eye). Milestone 4
+      checks not reported separately. Live checks with the TMDB/OMDb keys stay pending (below)
+
+### Phase 5 — GitHub repo and docs
+- [x] README in Library Notes' style: features, comparison with Library Notes and Media DB, installation, usage
+      (commands, adding a title, search tips, which source), folder structure, the library note and its generated query
+      (taken from the code, not copied by hand), regenerating, settings (every group), **Getting a TMDB key**
+      (the "How to get a key" button's anchor) and **Getting an OMDb key** (checked against TMDB's getting-started page
+      and OMDb's key page: OMDb mentions no activation link, so the README doesn't promise one), TMDB's 6-month limit,
+      templates and variables, network use and privacy (every host), content and licensing, troubleshooting,
+      development, releasing, credits with TMDB's logo and notice; MIT license with a note that the TMDB logo isn't MIT
+- [x] Checked the README against the code: 27 setting/command/button names and 16 messages found in the code; both
+      internal anchors resolve. Fixed what the check found: "searches are remembered" applies only to TVmaze, Tenrai,
+      and Jikan (TMDB and OMDb aren't cached); anime details request wording; Dataview notice now says "tables";
+      logged network errors now have any `apikey=`/`api_key=` value replaced with `[key]` (new test)
+- [x] Pre-push security checks (gitleaks 8.30.1 from the official release, checksum verified, run from the scratch
+      folder): every commit, the exact files to be pushed (`git archive`), and the decoded test recordings. First run:
+      4 findings, all made-up test keys (a JWT-shaped token decoding to {"alg":"HS256"}.{"test":true}.test-signature,
+      and `0123456789abcdef…`); moved into `tests/support/stand-ins.ts` with `gitleaks:allow`, earlier findings listed
+      in `.gitleaksignore` with an explanation. Re-run: **no leaks** in commits or files to be pushed. Personal-data
+      scan of every commit: only the made-up keys. 76 tracked files; ignored: `.claude/`, `main.js`, `node_modules/`,
+      `test-vault/`, `tests/.build/`. All commits by BurningBurrito (noreply address); 0 attribution lines
+
 ## In progress
-- [ ] User: milestone 4 checks 1–3 (no key) in the vault
+- [ ] User: go-ahead to create **BurningBurrito/obsidian-movie-library** (public) and push `main`; whether DESIGN.md and
+      STATUS.md are published (Library Notes published them)
 
 ## Next
 - [ ] Phase 4 — build and test, in milestones, each tested in the test vault with Library Notes alongside:
