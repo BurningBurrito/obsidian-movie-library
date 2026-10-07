@@ -5,6 +5,7 @@ import { toMediaError } from './core/errors';
 import { ensureFolder, normalizeFolder } from './core/notes';
 import { libraryPaths } from './core/paths';
 import { regenerateLibraryNote } from './library/moc';
+import { refreshStatus, refreshTmdbNotes } from './library/tmdb-refresh';
 import type WatchlistNotesPlugin from './main';
 import { BUILT_IN_TEMPLATES, TEMPLATE_COPY_PATHS } from './media/templates';
 import { MEDIA_TYPES, MEDIA_WORDS, MediaType } from './media/types';
@@ -349,6 +350,15 @@ export class WatchlistNotesSettingTab extends PluginSettingTab {
 				desc: 'Makes one small request to TMDB with your key.',
 				visible: () => this.plugin.getSecret(this.plugin.settings.tmdbKeySecret) !== '',
 				action: () => void this.checkSource('tmdb'),
+			},
+			{
+				name: `Refresh ${tmdb.name} notes`,
+				desc: refreshStatus(this.plugin),
+				action: () =>
+					void this.run(async () => {
+						await refreshTmdbNotes(this.plugin);
+						this.update();
+					}),
 			},
 			{
 				name: 'Preferred language',

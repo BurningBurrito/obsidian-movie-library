@@ -12,6 +12,12 @@ export function uniqueStrings(values: Iterable<string>): string[] {
 	return result;
 }
 
+/** "YYYY-MM-DD" in the user's time zone. */
+export function localDate(date: Date): string {
+	const pad = (n: number) => String(n).padStart(2, '0');
+	return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
 export function collapseWhitespace(text: string): string {
 	return text.replace(/\s+/g, ' ').trim();
 }

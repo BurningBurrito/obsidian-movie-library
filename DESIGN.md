@@ -587,6 +587,10 @@ watched." / "…as unwatched."; offered only for notes in the three type folders
   property, and the note's text.
 - A title TMDB no longer has (404), or a missing key, is listed in the summary and left as is; the plugin never
   deletes anything. If TMDB no longer has a poster, the summary says so (you decide whether to delete the old copy).
+- Added while building (2026-10-07): notes whose `source` is TMDB but have no TMDB address in `sourceUrl` (e.g. a
+  custom template) can't be refreshed and are listed by name; the refresh **stops** at the first problem that would
+  repeat for every note (offline, key rejected or missing, rate limit, network), and says so; a refreshed poster
+  keeps its file name (same naming as new notes).
 - README and settings explain TMDB's 6-month term; the README also says that if you stop using TMDB, its terms ask
   you to delete TMDB content, and how to find those notes (`source: TMDB`).
 

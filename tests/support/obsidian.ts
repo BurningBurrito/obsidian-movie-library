@@ -54,6 +54,9 @@ export class Notice {
 		notices.push(message);
 	}
 	hide() {}
+	setMessage() {
+		return this;
+	}
 }
 
 /** "Now" for {{date}} and {{time}}: shows the format asked for, so tests are stable. */

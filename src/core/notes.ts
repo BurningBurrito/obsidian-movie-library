@@ -59,6 +59,20 @@ export function findNoteByName(app: App, folder: string, baseName: string, recur
 	return null;
 }
 
+/** The Markdown notes in a folder and its subfolders. */
+export function notesIn(app: App, folder: string): TFile[] {
+	const start = app.vault.getFolderByPath(folder);
+	const notes: TFile[] = [];
+	const pending: TFolder[] = start ? [start] : [];
+	for (let current = pending.pop(); current; current = pending.pop()) {
+		for (const child of current.children) {
+			if (child instanceof TFile && child.extension === 'md') notes.push(child);
+			else if (child instanceof TFolder) pending.push(child);
+		}
+	}
+	return notes;
+}
+
 /** Normalized folder path; "" means the vault root. */
 export function normalizeFolder(folder: string): string {
 	const path = normalizePath(folder.trim());

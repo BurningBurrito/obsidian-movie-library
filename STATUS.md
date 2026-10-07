@@ -1,7 +1,6 @@
 # Status: Watchlist Notes (`watchlist-notes`)
-**Current phase:** Phase 4 — Build and test: **milestone 3 (movies) built without keys and tested offline**; live
-check with the user's keys later
-**Last updated:** 2026-10-06
+**Current phase:** Phase 4 — Build and test: **milestone 4 (Refresh TMDB notes) built and tested offline**
+**Last updated:** 2026-10-07
 
 ## Done
 
@@ -192,12 +191,30 @@ check with the user's keys later
     in each service's documented format (DESIGN.md, "Tests for TMDB and OMDb"); the recording tool refuses TMDB/OMDb hosts
   - build (main.js 52,017 bytes; hosts: the 13 expected), lint, lint without moment types: clean
 
+- [x] User tested milestone 3 checks 1–3 (2026-10-07): "looks good, tests are fine"
+- [x] **Milestone 4** (Refresh TMDB notes, decision R3 option A), local commit:
+  - `library/tmdb-refresh.ts`: finds notes in the three folders whose `sourceUrl` is a TMDB address (type from the
+    folder, movie/TV and ID from the address); **due** 5 calendar months after `sourceUpdated`, else `created`, else
+    the file's creation time; command **Refresh TMDB notes** asks first (**Refresh N due** / **Refresh all M** /
+    Cancel, explaining what changes); per note: details again, poster downloaded and the linked poster file
+    **replaced in place** (`vault.modifyBinary`, only inside the posters folder; otherwise a new poster under the
+    usual name is linked), only the TMDB properties the note already has are updated, `sourceUpdated` = today;
+    never changed: file name, `title`, `watched`, `rating`, `tags`, `link`, `created`, other properties, the text
+  - Summary notice: refreshed count; no longer on TMDB (left as is); no poster at TMDB (old one kept); failures;
+    stops at problems that would repeat (offline, key missing/rejected, rate limit, network); notes that say
+    `source: TMDB` without a TMDB address are listed as not refreshable. Progress shown in one notice ("3 of 12")
+  - Reminder once per session when a create or regenerate command runs and notes are due; TMDB settings show the
+    status ("N of your M notes from TMDB were last updated more than 5 months ago…") with the action
+  - Shared poster naming (`posterBaseName`), `notesIn` (notes in a folder tree), `localDate`
+  - Tests: **123 pass offline** (new: refresh 10, stand-in answers). Build (main.js 58,778 bytes), lint, lint without
+    moment types: clean
+  - Test vault: `Watch Library/Movies/Refresh test.md` (pretends to be from TMDB, 9 months old) for checks without a key
+
 ## In progress
-- [ ] User: milestone 3 checks 1–3 (no keys) in the vault; checks 4–7 when the keys exist
+- [ ] User: milestone 4 checks 1–3 (no key) in the vault
 
 ## Next
 - [ ] Phase 4 — build and test, in milestones, each tested in the test vault with Library Notes alongside:
-  - M4: Refresh TMDB notes (due after 5 months, reminder, confirmation, summary)
   - M5: recorded-response tests for every source, developer checks, error cases (offline, no results, rate limits,
     slow responses, invalid keys)
 - [ ] Phase 5: GitHub repo `obsidian-movie-library`, public (confirm before creating) and docs

@@ -2,11 +2,13 @@ import { Menu, Notice, Plugin } from 'obsidian';
 import { toMediaError } from './core/errors';
 import { clearCache, setUserAgent } from './core/http';
 import { regenerateLibraryNote } from './library/moc';
+import { refreshTmdbNotes, remindIfDue } from './library/tmdb-refresh';
 import { isWatchNote, toggleWatched } from './library/watched-status';
 import { createTitleNote } from './media/create-note';
 import type { MediaType } from './media/types';
 import { sanitizeSettings, WatchlistNotesSettings, WatchlistNotesSettingTab } from './settings';
 import { forgetFailures } from './sources';
+import { tmdb } from './sources/tmdb';
 
 // One command per type, so each can have its own hotkey; the ribbon icon offers the same as a menu.
 const CREATE_COMMANDS: { type: MediaType; id: string; name: string; menu: string; icon: string }[] = [
@@ -27,7 +29,7 @@ export default class WatchlistNotesPlugin extends Plugin {
 			this.addCommand({
 				id: command.id,
 				name: command.name,
-				callback: () => this.run(() => createTitleNote(this, command.type)),
+				callback: () => this.create(command.type),
 			});
 		}
 		this.addCommand({
@@ -48,7 +50,15 @@ export default class WatchlistNotesPlugin extends Plugin {
 		this.addCommand({
 			id: 'regenerate-watch-library',
 			name: 'Regenerate library note',
-			callback: () => this.run(() => regenerateLibraryNote(this)),
+			callback: () => {
+				remindIfDue(this);
+				this.run(() => regenerateLibraryNote(this));
+			},
+		});
+		this.addCommand({
+			id: 'refresh-tmdb-notes',
+			name: `Refresh ${tmdb.name} notes`,
+			callback: () => this.run(() => refreshTmdbNotes(this)),
 		});
 
 		this.addRibbonIcon('clapperboard', 'Create a watchlist note', (evt) => {
@@ -58,7 +68,7 @@ export default class WatchlistNotesPlugin extends Plugin {
 					item
 						.setTitle(command.menu)
 						.setIcon(command.icon)
-						.onClick(() => this.run(() => createTitleNote(this, command.type))),
+						.onClick(() => this.create(command.type)),
 				);
 			}
 			menu.showAtMouseEvent(evt);
@@ -83,6 +93,12 @@ export default class WatchlistNotesPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	/** Create a note; first, once per session, mention notes from TMDB that are due for a refresh. */
+	private create(type: MediaType) {
+		remindIfDue(this);
+		this.run(() => createTitleNote(this, type));
 	}
 
 	private run(task: () => Promise<void>) {

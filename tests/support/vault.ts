@@ -77,6 +77,10 @@ function makeVault(files: Map<string, string | ArrayBuffer>) {
 		},
 		create: (path: string, data: string) => Promise.resolve(addFile(path, data)),
 		createBinary: (path: string, data: ArrayBuffer) => Promise.resolve(addFile(path, data)),
+		modifyBinary: (file: TFile, data: ArrayBuffer) => {
+			files.set(file.path, data);
+			return Promise.resolve();
+		},
 		read: (file: TFile) => Promise.resolve(files.get(file.path) as string),
 		cachedRead: (file: TFile) => Promise.resolve(files.get(file.path) as string),
 		process: (file: TFile, fn: (data: string) => string) => {

@@ -149,15 +149,18 @@ async function savePosterFor(
 			new Notice(`${source.name} has no poster for "${noteTitle}".`);
 			return null;
 		}
-		// Title, year, and the source's ID, so two titles never share a poster.
-		const year = title.year ? ` (${title.year})` : '';
-		const baseName = `${safeFileName(noteTitle, 'Poster', 80)}${year} - ${safeFileName(title.source.key, 'poster')}`;
-		const file = await savePoster(plugin.app, postersFolder, baseName, image);
+		const file = await savePoster(plugin.app, postersFolder, posterBaseName(noteTitle, title), image);
 		return file.path;
 	} catch (err) {
 		new Notice(`Couldn't save the poster (${toMediaError(err).message}) The note was created without it.`, 8000);
 		return null;
 	}
+}
+
+/** "Inception (2010) - tmdb-movie-27205": title, year, and the source's ID, so two titles never share a poster. */
+export function posterBaseName(noteTitle: string, title: Title): string {
+	const year = title.year ? ` (${title.year})` : '';
+	return `${safeFileName(noteTitle, 'Poster', 80)}${year} - ${safeFileName(title.source.key, 'poster')}`;
 }
 
 /** With no source set up for this type (movies without a key), explain instead of failing. */
