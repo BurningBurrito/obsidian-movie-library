@@ -1,6 +1,5 @@
 # Status: Watchlist Notes (`watchlist-notes`)
-**Current phase:** Phase 5 — GitHub repo and docs: **README written, pre-push checks clean; waiting for the user's
-go-ahead to create the public repo and push**
+**Current phase:** Phase 5 — GitHub repo and docs: **complete** (repo public, `main` pushed, CI green); Phase 6 next
 **Last updated:** 2026-10-07
 
 ## Done
@@ -235,15 +234,25 @@ go-ahead to create the public repo and push**
       scan of every commit: only the made-up keys. 76 tracked files; ignored: `.claude/`, `main.js`, `node_modules/`,
       `test-vault/`, `tests/.build/`. All commits by BurningBurrito (noreply address); 0 attribution lines
 
+- [x] User (2026-10-07): "Yes, include DESIGN/STATUS" — create the public repo and push
+- [x] Before the push: `gh` signed in as BurningBurrito (scopes include `repo`, `workflow`); clean tree; 0 attribution
+      lines; one author (noreply)
+- [x] Created **https://github.com/BurningBurrito/obsidian-movie-library** (public; description = manifest description;
+      topics obsidian, obsidian-plugin, obsidian-md, movies, tv-shows, anime, tmdb, tvmaze, myanimelist, dataview,
+      watchlist)
+- [x] Pushed `main` only (11 commits, f73bd5a; no tags). CI run 37578016662: **success** on Node 22 and 24 (npm ci,
+      build, lint, `npm test`, lint without moment types)
+- [x] Checked from outside: `assets/tmdb-logo.svg`, README.md, manifest.json served from GitHub (200) and identical to
+      the local files
+- [x] Carried over from Library Notes and in the repo: release workflow, LICENSE (MIT), .gitignore, lint setup
+
 ## In progress
-- [ ] User: go-ahead to create **BurningBurrito/obsidian-movie-library** (public) and push `main`; whether DESIGN.md and
-      STATUS.md are published (Library Notes published them)
+- [ ] Phase 6 decisions: version for the first release; release before or after the live TMDB/OMDb check
 
 ## Next
 - [ ] Phase 4 — build and test, in milestones, each tested in the test vault with Library Notes alongside:
   - M5: recorded-response tests for every source, developer checks, error cases (offline, no results, rate limits,
     slow responses, invalid keys)
-- [ ] Phase 5: GitHub repo `obsidian-movie-library`, public (confirm before creating) and docs
 - [ ] Phase 6: release and community submission (show everything before submitting)
 
 ## Decisions made
