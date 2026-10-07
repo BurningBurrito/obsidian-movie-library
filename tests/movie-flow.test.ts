@@ -6,11 +6,11 @@ import type { WatchlistNotesSettings } from '../src/settings';
 import { forgetFailures } from '../src/sources';
 import { notices } from './support/obsidian';
 import { fake, json, requests, resetNetwork } from './support/network';
-import { omdbAnswers, POSTER, tmdbAnswers } from './support/stand-ins';
+import { FAKE_TMDB_TOKEN, omdbAnswers, POSTER, tmdbAnswers } from './support/stand-ins';
 import { resetUi, ui, userPicks, userSearches } from './support/ui';
 import { frontmatter, makeApp, makePlugin, TestApp } from './support/vault';
 
-const TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJ0ZXN0Ijp0cnVlfQ.dGVzdC1zaWduYXR1cmU';
+const TOKEN = FAKE_TMDB_TOKEN;
 let app: TestApp;
 function plugin(keys: { tmdb?: boolean; omdb?: boolean } = { tmdb: true }, settings: Partial<WatchlistNotesSettings> = {}) {
 	if (keys.tmdb) app.secretStorage.setSecret('tmdb', TOKEN);

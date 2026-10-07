@@ -5,11 +5,11 @@ import { localDate } from '../src/core/utils';
 import { findTmdbNotes, isDue, refreshStatus, refreshTmdbNotes, remindIfDue, resetReminder } from '../src/library/tmdb-refresh';
 import { notices } from './support/obsidian';
 import { fake, json, requests, resetNetwork } from './support/network';
-import { POSTER, tmdbAnswers } from './support/stand-ins';
+import { FAKE_TMDB_TOKEN, POSTER, tmdbAnswers } from './support/stand-ins';
 import { resetUi, ui, userChooses } from './support/ui';
 import { frontmatter, makeApp, makePlugin, TestApp } from './support/vault';
 
-const TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJ0ZXN0Ijp0cnVlfQ.dGVzdC1zaWduYXR1cmU';
+const TOKEN = FAKE_TMDB_TOKEN;
 const NOTE = 'Watch Library/Movies/Inception.md';
 const POSTER_PATH = 'Watch Library/Posters/Inception (2010) - tmdb-movie-27205.jpg';
 const OLD_POSTER = Uint8Array.from([0xff, 0xd8, 0xff, 0xe0, ...new Array<number>(2048).fill(1)]).buffer;

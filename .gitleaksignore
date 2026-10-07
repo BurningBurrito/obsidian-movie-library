@@ -1,0 +1,7 @@
+# Findings gitleaks reports in earlier commits that are made-up test keys, not secrets:
+# a JWT-shaped TMDB token that decodes to {"alg":"HS256"}.{"test":true}.test-signature, and a hex API key
+# 0123456789abcdef0123456789abcdef. They now live in tests/support/stand-ins.ts, marked gitleaks:allow.
+f7b2cd4b089b985d5b5da30c50723c6846e6f864:tests/refresh.test.ts:generic-api-key:12
+23ebd58ae85d247209e680650b9859c1c4a46f3a:tests/movie-flow.test.ts:generic-api-key:13
+23ebd58ae85d247209e680650b9859c1c4a46f3a:tests/tmdb.test.ts:generic-api-key:12
+23ebd58ae85d247209e680650b9859c1c4a46f3a:tests/tmdb.test.ts:generic-api-key:13

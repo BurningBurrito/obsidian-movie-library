@@ -4,6 +4,10 @@
 // six months, so no real TMDB answers are stored in this repository.
 import { json } from './network';
 
+/** Made-up keys in TMDB's formats: a JWT-shaped token ({"alg":"HS256"}.{"test":true}.test-signature) and a hex API key. */
+export const FAKE_TMDB_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJ0ZXN0Ijp0cnVlfQ.dGVzdC1zaWduYXR1cmU'; // gitleaks:allow (made up for tests)
+export const FAKE_TMDB_API_KEY = '0123456789abcdef0123456789abcdef'; // gitleaks:allow (made up for tests)
+
 const TEXT = 'A description written for the Watchlist Notes tests.';
 const bytes = Uint8Array.from([0xff, 0xd8, 0xff, 0xe0, ...new Array<number>(4096).fill(7)]);
 /** A small stand-in JPEG for poster downloads. */

@@ -5,12 +5,11 @@ import type { WatchlistNotesSettings } from '../src/settings';
 import { parseQuery } from '../src/sources';
 import { isReadAccessToken, tmdb } from '../src/sources/tmdb';
 import { fake, requests, resetNetwork } from './support/network';
-import { tmdbAnswers } from './support/stand-ins';
+import { FAKE_TMDB_API_KEY, FAKE_TMDB_TOKEN, tmdbAnswers } from './support/stand-ins';
 import { makeApp, makePlugin } from './support/vault';
 
-// A made-up token in the Read Access Token's format (a JWT), and a made-up API key.
-const TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJ0ZXN0Ijp0cnVlfQ.dGVzdC1zaWduYXR1cmU';
-const API_KEY = '0123456789abcdef0123456789abcdef';
+const TOKEN = FAKE_TMDB_TOKEN;
+const API_KEY = FAKE_TMDB_API_KEY;
 
 function plugin(key: string | null = TOKEN, settings: Partial<WatchlistNotesSettings> = {}) {
 	const app = makeApp();
