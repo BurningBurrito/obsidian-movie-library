@@ -1,7 +1,7 @@
 # Status: Watchlist Notes (`watchlist-notes`)
-**Current phase:** Phase 6 — Release and submission: **1.0.0 published**; submission prepared, waiting for the user to
-submit at community.obsidian.md
-**Last updated:** 2026-10-07
+**Current phase:** Phase 6 — Release and submission: **1.0.0 published; submitted** (entry page live at
+community.obsidian.md/plugins/watchlist-notes; not yet in `community-plugins.json` as of 2026-10-08)
+**Last updated:** 2026-10-08
 
 ## Done
 
@@ -307,9 +307,14 @@ submit at community.obsidian.md
 - [x] Submission walkthrough and listing text prepared (in chat): sign in, GitHub connected, Plugins → New plugin
       (repo URL, owner Myself, agree to policies) → automated review → Edit listing (icon, short and long description
       saying how it differs from Library Notes and Media DB, categories, payment type Free, optional screenshots)
+- [x] Portfolio card on tonyherrera.org (2026-10-08, TonyHerreraWebsite 37218b8): added to the "Obsidian Plugins"
+      card with Dictionary Notes and Library Notes. Its own highlight and row ("Obsidian directory review pending";
+      Get Plugin → GitHub release, Source → repo), a watch-library sample (Inception, Severance, Frieren, from the
+      test recordings), and its 124 tests in the card's total (294)
 
 ## In progress
-- [ ] User: submit at community.obsidian.md and share the automated review's results
+- [x] User: submit at community.obsidian.md (entry page live, seen 2026-10-08)
+- [ ] User: share the automated review's results
 
 ## Next
 - [ ] Phase 4 — build and test, in milestones, each tested in the test vault with Library Notes alongside:
@@ -317,6 +322,8 @@ submit at community.obsidian.md
     slow responses, invalid keys)
 - [ ] After the review: fix anything it flags (patch release), then Edit listing and Publish
 - [ ] Once listed: announce (forum Share & showcase, Discord #updates) if the user wants
+- [ ] Once listed (in obsidianmd/obsidian-releases `community-plugins.json`): update the tonyherrera.org card to
+      link to community.obsidian.md/plugins/watchlist-notes and drop "review pending" (in that repo's STATUS.md)
 
 ## Decisions made
 - Library Notes is never modified; the new plugin is a separate project with its own git history
