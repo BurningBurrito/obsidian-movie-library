@@ -1,6 +1,6 @@
 # Status: Watchlist Notes (`watchlist-notes`)
-**Current phase:** Phase 6 — Release and submission: **1.0.0 draft release verified; waiting for the user's go-ahead
-to publish it**
+**Current phase:** Phase 6 — Release and submission: **1.0.0 published**; submission prepared, waiting for the user to
+submit at community.obsidian.md
 **Last updated:** 2026-10-07
 
 ## Done
@@ -300,14 +300,23 @@ to publish it**
       attestation verified for main.js and styles.css: signed by release.yml at refs/tags/1.0.0, commit 1f59a45,
       GitHub-hosted runner
 
+- [x] User approved publishing (2026-10-07). **Published 1.0.0** (2026-10-08 01:33 UTC) with the release notes shown in
+      chat (features, requirements, TMDB notice), marked latest
+- [x] Checked from outside (no login): GitHub's public latest-release answer = tag 1.0.0, not draft, 3 assets; public
+      download links for main.js, manifest.json, styles.css return 200 and are byte-identical to the local build
+- [x] Submission walkthrough and listing text prepared (in chat): sign in, GitHub connected, Plugins → New plugin
+      (repo URL, owner Myself, agree to policies) → automated review → Edit listing (icon, short and long description
+      saying how it differs from Library Notes and Media DB, categories, payment type Free, optional screenshots)
+
 ## In progress
-- [ ] User: go-ahead to publish the 1.0.0 release (release notes shown in chat), then the submission walkthrough
+- [ ] User: submit at community.obsidian.md and share the automated review's results
 
 ## Next
 - [ ] Phase 4 — build and test, in milestones, each tested in the test vault with Library Notes alongside:
   - M5: recorded-response tests for every source, developer checks, error cases (offline, no results, rate limits,
     slow responses, invalid keys)
-- [ ] Phase 6: release and community submission (show everything before submitting)
+- [ ] After the review: fix anything it flags (patch release), then Edit listing and Publish
+- [ ] Once listed: announce (forum Share & showcase, Discord #updates) if the user wants
 
 ## Decisions made
 - Library Notes is never modified; the new plugin is a separate project with its own git history
