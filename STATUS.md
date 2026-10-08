@@ -1,5 +1,6 @@
 # Status: Watchlist Notes (`watchlist-notes`)
-**Current phase:** Phase 5 — GitHub repo and docs: **complete** (repo public, `main` pushed, CI green); Phase 6 next
+**Current phase:** Phase 6 — Release and submission: **1.0.0 prepared locally; waiting for the user's go-ahead to push
+the tag** (the workflow then makes a draft release)
 **Last updated:** 2026-10-07
 
 ## Done
@@ -265,8 +266,30 @@
     so the earlier TVmaze note was either never created or deleted by hand
   - Pending item closed: TMDB and OMDb answers match the documented formats the tests use
 
+### Phase 6 — Release and submission
+- [x] Re-checked Obsidian's docs on GitHub (2026-10-07): latest docs commit c56c7e7 (2026-08-10); "Submit your plugin",
+      "Submission requirements", and "Developer policies" last changed 2026-08-07 (same as for Library Notes). Process:
+      README + LICENSE + manifest in the repo root → GitHub release whose tag = manifest version, with main.js,
+      manifest.json, styles.css → community.obsidian.md: sign in with an Obsidian account, connect GitHub, Plugins →
+      New plugin (repository URL, owner; agree to the Developer policies and to keep supporting it) → automated review
+      (manifest, release assets, source code, build verification: build must match the committed source) → Edit
+      listing (icon, short/long description, categories, payment type, up to 5 desktop screenshots 1200×800). The entry
+      page also has **Review branch** (preview scan before a release) and **Check for new releases**
+- [x] Developer policies checked: no obfuscation, ads, telemetry, or self-updating; disclosures in the README (network
+      use with every service and why; an account and key needed for movies); MIT license; not a fork; no "Obsidian" in
+      the plugin name or ID (the repo name may contain it)
+- [x] Submission requirements checked: no `fundingUrl`; `minAppVersion` 1.13.0 is right (newest APIs used: `update`,
+      `validate`, `visible`, @since 1.13.0; the three 1.13.1 names a script flagged are settings-page options not used);
+      description 186 characters, ends with a period, no emoji; `isDesktopOnly` false and the bundle requires only
+      `obsidian`; command IDs without the plugin ID; no sample code
+- [x] ID `watchlist-notes` and name "Watchlist Notes" still free (8,532 listed, 175 removed); repo not listed
+- [x] `npm version 1.0.0 -m "Release %s"`: commit 1f59a45 "Release 1.0.0" (package, lock, manifest 1.0.0,
+      versions.json `"1.0.0": "1.13.0"`), annotated tag `1.0.0` (no "v"; noreply tagger)
+- [x] Local release build after `npm ci` (for comparison with the workflow's): main.js 58,902 bytes (sha256 28f7df9d…),
+      manifest.json 416 (2b1b6fb1…), styles.css 1,823 (4ddc30f3…); no developer-only code; lint clean; 124/124 tests
+
 ## In progress
-- [ ] Phase 6: re-check Obsidian's submission process and requirements; prepare 1.0.0
+- [ ] User: go-ahead to push `main` and tag `1.0.0` (the release workflow then creates a **draft** release)
 
 ## Next
 - [ ] Phase 4 — build and test, in milestones, each tested in the test vault with Library Notes alongside:
