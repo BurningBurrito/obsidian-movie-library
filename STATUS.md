@@ -1,6 +1,6 @@
 # Status: Watchlist Notes (`watchlist-notes`)
-**Current phase:** Phase 6 — Release and submission: **1.0.0 prepared locally; waiting for the user's go-ahead to push
-the tag** (the workflow then makes a draft release)
+**Current phase:** Phase 6 — Release and submission: **1.0.0 draft release verified; waiting for the user's go-ahead
+to publish it**
 **Last updated:** 2026-10-07
 
 ## Done
@@ -288,8 +288,20 @@ the tag** (the workflow then makes a draft release)
 - [x] Local release build after `npm ci` (for comparison with the workflow's): main.js 58,902 bytes (sha256 28f7df9d…),
       manifest.json 416 (2b1b6fb1…), styles.css 1,823 (4ddc30f3…); no developer-only code; lint clean; 124/124 tests
 
+- [x] User approved pushing `main` and tag `1.0.0` (2026-10-07). Attribution check (0) and authors/tagger (noreply)
+      ran before the push. **The gitleaks re-scan didn't run** (the scratch copy was gone and the commands were chained
+      with `;`, so the push continued); re-downloaded gitleaks 8.30.1 (checksum OK) right after and scanned: **no leaks**
+      in the full history or the 4 pushed commits (they changed only STATUS.md and version files). Pre-push checks are
+      now chained with `&&` so a check that can't run blocks the push
+- [x] Pushed `main` (2f3a675) and tag `1.0.0` (→ 1f59a45). Release workflow run 37713329364: **success** (tag = manifest
+      check, build, attestation, draft release)
+- [x] Draft verified: tag 1.0.0, draft, not pre-release; 3 assets (main.js 58,902 / manifest.json 416 / styles.css
+      1,823 bytes), **all byte-identical to the local build**; manifest = watchlist-notes 1.0.0, minAppVersion 1.13.0;
+      attestation verified for main.js and styles.css: signed by release.yml at refs/tags/1.0.0, commit 1f59a45,
+      GitHub-hosted runner
+
 ## In progress
-- [ ] User: go-ahead to push `main` and tag `1.0.0` (the release workflow then creates a **draft** release)
+- [ ] User: go-ahead to publish the 1.0.0 release (release notes shown in chat), then the submission walkthrough
 
 ## Next
 - [ ] Phase 4 — build and test, in milestones, each tested in the test vault with Library Notes alongside:
