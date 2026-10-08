@@ -249,8 +249,24 @@
 - [x] Phase 6 decision (user, 2026-10-07): first release is **1.0.0**. User is getting a TMDB key now, so the live
       TMDB check runs before the release
 
+- [x] **Live check with the user's keys** (2026-10-07; keys in Obsidian's keychain; the plugin's data.json holds only
+      the secret names `tmdb` / `omdb`). Check TMDB key and Check OMDb key: both valid. Notes read back from the vault:
+  - TMDB movie (*Inception*, created as `Inception (2010)` next to the sample note): director, 5 cast in billing
+    order, genres, runtime 148, release date, score 8.37, w500 poster (108 KB): all correct
+  - OMDb movie (*The Matrix*): 2 directors, cast, genres, runtime 136, release date 1999-03-31, score 8.7, IMDb link,
+    poster saved (52 KB). **Confirms free OMDb keys get poster links** (now `…_V1_QL75_UX380_…jpg`, 380 px wide)
+  - TMDB TV (*Breaking Bad*): creator, network AMC, 5 seasons, 62 episodes, last aired, status Ended, cast, genres;
+    *Breaking Bad Fortune Teller* (TMDB has no creator/network for it): empty fields handled
+  - Refresh ("Refresh all"): *Refresh test* got Inception's description and a poster link (its `localCover` was
+    empty), kept its title, watched, rating; `sourceUpdated` = today on every TMDB note. Properties a note didn't have
+    weren't added
+  - `TV Shows/Breaking Bad.md` is from TMDB, with no TVmaze Breaking Bad note or poster in the vault. The plugin's
+    code has no delete/rename/overwrite calls (`vault.create` refuses existing files; posters are never removed),
+    so the earlier TVmaze note was either never created or deleted by hand
+  - Pending item closed: TMDB and OMDb answers match the documented formats the tests use
+
 ## In progress
-- [ ] User: TMDB key (steps given in chat), then milestone 3 checks 4, 6, 7 and the milestone 4 refresh check with it
+- [ ] Phase 6: re-check Obsidian's submission process and requirements; prepare 1.0.0
 
 ## Next
 - [ ] Phase 4 — build and test, in milestones, each tested in the test vault with Library Notes alongside:
@@ -282,8 +298,7 @@
 
 ## Open questions / blockers
 - Risk: Tenrai is in beta with a v2 planned; Jikan is down. Anime without a key depends on one of them working
-- **Pending live check with the user's keys** (user, 2026-10-06: keys later): TMDB with a real Read Access Token and
-  an API key (search, details, credits, `/find`, anime results, posters); OMDb with a free key (field names, the
-  `Poster` field on a free key, the daily-limit message's exact wording)
+- Not checked live (can't be triggered on demand): OMDb's daily-limit message wording; TMDB anime search with a key;
+  TMDB's older short API key (the token was used)
 - Phase 5: the README needs a heading "Getting a TMDB key" (the "How to get a key" button links to
   `#getting-a-tmdb-key`)
