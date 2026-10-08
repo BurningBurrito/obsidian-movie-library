@@ -246,8 +246,11 @@
       the local files
 - [x] Carried over from Library Notes and in the repo: release workflow, LICENSE (MIT), .gitignore, lint setup
 
+- [x] Phase 6 decision (user, 2026-10-07): first release is **1.0.0**. User is getting a TMDB key now, so the live
+      TMDB check runs before the release
+
 ## In progress
-- [ ] Phase 6 decisions: version for the first release; release before or after the live TMDB/OMDb check
+- [ ] User: TMDB key (steps given in chat), then milestone 3 checks 4, 6, 7 and the milestone 4 refresh check with it
 
 ## Next
 - [ ] Phase 4 — build and test, in milestones, each tested in the test vault with Library Notes alongside:
@@ -265,6 +268,7 @@
   or otherwise approved by TMDB."
 - R6 TV: TVmaze → TMDB → OMDb. R7 Movies: TMDB → OMDb; without a key, explain and link to setup
 - Q1 Name **Watchlist Notes**, ID **`watchlist-notes`** (user, 2026-10-06). The ID can never change after release
+- First release version **1.0.0** (user, 2026-10-07)
 - Public GitHub repository: **`BurningBurrito/obsidian-movie-library`** (user, 2026-10-06: "name this
   obsidian-movie-library as the public git before we publish"). Name checked free on the account. The repo is
   still created only in Phase 5, after confirming. Plugin name and ID unchanged (a repo name may differ from the
