@@ -1,6 +1,6 @@
 {
 	"name": "watchlist-notes",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"description": "Search for movies, TV shows, and anime, save each one as a note with its poster, and keep a library note with a table of everything you watch. TV shows and anime work without an API key.",
 	"main": "main.js",
 	"type": "module",
